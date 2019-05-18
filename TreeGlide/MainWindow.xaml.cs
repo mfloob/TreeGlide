@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using System.Windows.Threading;
 
-namespace TreeTree
+namespace TreeGlide
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Input;
 
-namespace TreeTree
+namespace TreeGlide
 {
     public class MemoryManager
     {
