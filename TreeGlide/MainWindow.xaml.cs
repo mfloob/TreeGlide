@@ -30,6 +30,7 @@ namespace TreeGlide
         private bool attachedLogged;
         private bool localFound;
         private bool localLogged;
+        private bool running;
         public static MemoryManager memoryManager;
         public static LocalPlayer localPlayer;
         public static Movement movement;
@@ -51,7 +52,7 @@ namespace TreeGlide
             logger = new Logger(LogBox);
             logger.Log("Initializing...");
             timerList = new List<DispatcherTimer>();
-            DispatcherTimer processCheckTimer = Timer(500);
+            DispatcherTimer processCheckTimer = Timer(500, false);
             processCheckTimer.Tick += processCheckTimer_Tick;
             processCheckTimer.Start();
         }
@@ -109,10 +110,11 @@ namespace TreeGlide
         }
         #endregion
 
-        private DispatcherTimer Timer(int delay)
+        private DispatcherTimer Timer(int delay, bool addToTimerList)
         {
             DispatcherTimer newTimer = new DispatcherTimer();
-            timerList.Add(newTimer);
+            if (addToTimerList)
+                timerList.Add(newTimer);
             newTimer.Interval = new TimeSpan(0, 0, 0, 0, delay);
             return newTimer;
         }
@@ -148,14 +150,15 @@ namespace TreeGlide
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (!localFound || running)
+                return;
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot();
             bot.OnStart();
-
-            DispatcherTimer botTimer = Timer(10);
+            running = true;
+            DispatcherTimer botTimer = Timer(100, true);
             botTimer.Tick += (s, e1) => { botTimer_Tick(sender, e, bot); };
             botTimer.Start();
-
         }       
 
         private void RefreshEntities()
@@ -166,11 +169,14 @@ namespace TreeGlide
 
         private void Stop_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (!running)
+                return;
             foreach (DispatcherTimer timer in timerList)
                 timer.Stop();
+            running = false;
         }
 
-        #region UI Controls
+        #region Mob List Controls
         private void LogBox_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             LogScroller.ScrollToBottom();
