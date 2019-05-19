@@ -80,7 +80,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Entity.cs" />
-    <Compile Include="GrindBot.cs" />
+    <Compile Include="Grinder\GrindBot.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="TaskManager.cs" />
     <Page Include="MainWindow.xaml">

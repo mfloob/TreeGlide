@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
+
 namespace TreeGlide
 {
     public abstract class Task
     {
         public abstract bool Validate();
-        public abstract void Execute();
+        public abstract bool Execute();
 
         public EntityManager entityManager;
         public LocalPlayer localPlayer;
@@ -35,9 +36,10 @@ namespace TreeGlide
             return target.GetDistance() < 20f;
         }
 
-        public override void Execute()
+        public override bool Execute()
         {            
             movement.Attack();
+            return true;
         }
     }
 
@@ -55,9 +57,10 @@ namespace TreeGlide
             return false;
         }
 
-        public override void Execute()
+        public override bool Execute()
         {
             movement.MoveToPoint(new PointF(target.xCoord, target.yCoord), 20f);
+            return true;
         }
     }
 
@@ -98,10 +101,11 @@ namespace TreeGlide
             return false;
         }
 
-        public override void Execute()
+        public override bool Execute()
         {
             PointF newPoint = movement.PointOnVector(new PointF(target.xCoord, target.yCoord), 30f);
             localPlayer.Teleport(newPoint.X, newPoint.Y, target.zCoord);
+            return true;
         }
 
         private bool Moving()

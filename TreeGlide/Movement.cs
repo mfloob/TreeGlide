@@ -99,7 +99,7 @@ namespace TreeGlide
         public void Attack()
         {
             KeysUp();
-            InputManager.CastKey(space);
+            InputManager.CastKey(space);   
         }        
 
         #region Move Utilities

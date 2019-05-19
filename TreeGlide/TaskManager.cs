@@ -11,18 +11,23 @@ namespace TreeGlide
         private List<Task> taskList = new List<Task>();
         public abstract void OnStart();
 
+        public async Task<T> Run<T>(T x)
+        {
+            return await System.Threading.Tasks.Task.Run(() => x);
+        }
+
         public void Add(params Task[] tasks)
         {
             foreach (Task task in tasks)
                 taskList.Add(task);
         }
 
-        public void OnTick()
+        public async void OnTick()
         {
             foreach(Task task in this.taskList)
             {
-                if (task.Validate())
-                    task.Execute();
+                if (await Run(task.Validate()))
+                    await Run(task.Execute());
             }
         }
     }

@@ -24,10 +24,11 @@ namespace TreeGlide
     {
         private const string PROCESS_NAME = "Client_tos";
         private const Int32 LOCAL_BASE = 0x1505234;
-        public static MemoryManager memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
+        public static MemoryManager memoryManager;
         public static LocalPlayer localPlayer;
         public static Movement movement;
         public static EntityManager entityManager;
+        public static Logger logger;
         public List<DispatcherTimer> timerList;
 
         #region Offsets
@@ -36,6 +37,15 @@ namespace TreeGlide
         public MainWindow()
         {
             InitializeComponent();
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            logger = new Logger(LogBox);
+            logger.Log("Initializing...");
+            memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
+            logger.Log("Process found!");
             localPlayer = new LocalPlayer(memoryManager);
             movement = new Movement(localPlayer);
             entityManager = new EntityManager(memoryManager);
@@ -50,9 +60,10 @@ namespace TreeGlide
 
             DispatcherTimer botTimer = new DispatcherTimer();
             timerList.Add(botTimer);
-            botTimer.Interval = new TimeSpan(0, 0, 0, 0, 50);
+            botTimer.Interval = new TimeSpan(0, 0, 0, 0, 10);
             botTimer.Tick += (s, e1) => { botTimer_Tick(sender, e, bot); };
             botTimer.Start();
+
         }       
 
         private void botTimer_Tick(object sender, EventArgs e, GrindBot bot)
@@ -73,6 +84,11 @@ namespace TreeGlide
         }
 
         #region UI Controls
+        private void LogBox_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LogScroller.ScrollToBottom();
+        }
+
         private void RefreshEntityList_Button_Click(object sender, RoutedEventArgs e)
         {
             RefreshEntities();
@@ -120,8 +136,8 @@ namespace TreeGlide
             AttackEnemy_ListBox.SelectedIndex = -1;
             EnemyNearby_ListBox.SelectedIndex = -1;
         }
+
         #endregion
 
-        
     }
 }
