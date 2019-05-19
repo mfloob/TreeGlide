@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Diagnostics;
-using System.Threading;
-using System.Windows.Input;
+
 
 namespace TreeGlide
 {

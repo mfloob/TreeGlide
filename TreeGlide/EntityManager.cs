@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace TreeGlide
 {
     public class EntityManager
     {
         private MemoryManager memoryManager;
-        private Movement movement;
         private List<int> attackList;
 
         #region Offsets
@@ -29,7 +25,6 @@ namespace TreeGlide
         public EntityManager(MemoryManager memoryManager)
         {
             this.memoryManager = memoryManager;
-            this.movement = MainWindow.movement;
             attackList = new List<int>();
         }
         

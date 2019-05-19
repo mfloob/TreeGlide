@@ -10,12 +10,16 @@
         <TabControl x:Name="TabControl" Height="297" VerticalAlignment="Top" HorizontalAlignment="Left" Width="384" >
             <TabItem x:Name="HomeTabItem" Header="Home" FontSize="10" Controls:ControlsHelper.HeaderFontSize="18" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Left" VerticalContentAlignment="Top">
                 <Grid Background="#FF252526" Margin="0,2,0,-4" VerticalAlignment="Top" HorizontalAlignment="Left" Height="257" Width="381">
-                    <Button x:Name="Start_Button" Content="Start" HorizontalAlignment="Left" Height="43" Margin="18,23,0,0" VerticalAlignment="Top" Width="82" Click="Start_Button_Click" Focusable="False"/>
-                    <Button x:Name="Stop_Button" Content="Stop" HorizontalAlignment="Left" Height="43" Margin="126,23,0,0" VerticalAlignment="Top" Width="82" Click="Stop_Button_Click" Focusable="False"/>
+                    <Button x:Name="Start_Button" Content="Start" HorizontalAlignment="Left" Height="30" Margin="10,78,0,0" VerticalAlignment="Top" Width="61" Click="Start_Button_Click" Focusable="False"/>
+                    <Button x:Name="Stop_Button" Content="Stop" HorizontalAlignment="Left" Height="30" Margin="87,78,0,0" VerticalAlignment="Top" Width="61" Click="Stop_Button_Click" Focusable="False"/>
                     <ScrollViewer x:Name="LogScroller" HorizontalAlignment="Left" Height="138" Margin="0,119,0,0" VerticalAlignment="Top" Width="381" VerticalScrollBarVisibility="Auto"  BorderBrush="#FF686868" Grid.IsSharedSizeScope="True" Focusable="False" SnapsToDevicePixels="True" Padding="0" BorderThickness="0">
                         <ItemsControl x:Name="LogBox" BorderThickness="0" BorderBrush="#FFB9B9B9" Padding="0,5,0,0" Width="364" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="1003" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="LogBox_SizeChanged" Margin="10,0,0,0" Focusable="False" IsTabStop="False"/>
                     </ScrollViewer>
-                    <Frame Content="Frame" HorizontalAlignment="Left" Height="6" Margin="7,108,0,0" VerticalAlignment="Top" Width="364" BorderBrush="#FF686868" BorderThickness="0,0,0,1"/>
+                    <Frame Content="Frame" HorizontalAlignment="Left" Height="6" Margin="10,113,0,0" VerticalAlignment="Top" Width="364" BorderThickness="0,0,0,1" Foreground="{x:Null}" BorderBrush="#FF686868" Focusable="False"/>
+                    <Label Content="Process:" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="45" Margin="10,0,0,0"/>
+                    <Label x:Name="ProcessStatus_Label" Content="Status" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="62" Margin="55,0,0,0" Foreground="#FF7AE875" Padding="0,5,5,5"/>
+                    <Label Content="LocalPlayer:" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="61" Margin="10,25,0,0"/>
+                    <Label x:Name="LocalPlayerStatus_Label" Content="Not Found" HorizontalAlignment="Left" Height="25" VerticalAlignment="Top" Width="62" Margin="71,25,0,0" Foreground="Red" Padding="0,5,5,5"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="MobPickerTabItem" Header="Mob List" Background="#FF252526" FontSize="10" Controls:ControlsHelper.HeaderFontSize="18">

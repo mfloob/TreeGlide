@@ -14,6 +14,7 @@ namespace TreeGlide
         private float zCoord;
         private float attackSpeed;
         private float movementSpeed;
+        private bool isFound;
         MemoryManager memoryManager;
 
         #region Offsets
@@ -33,7 +34,6 @@ namespace TreeGlide
         public LocalPlayer(MemoryManager memoryManager)
         {
             this.memoryManager = memoryManager;
-            this.UpdateValues();
         }
 
         public void UpdateValues()
@@ -74,6 +74,12 @@ namespace TreeGlide
             this.zCoord = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Z });
             return this.zCoord;
         }
-
+        public bool IsFound()
+        {
+            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19200784;
+            if (isFound)
+                UpdateValues();
+            return isFound;
+        }
     }
 }
