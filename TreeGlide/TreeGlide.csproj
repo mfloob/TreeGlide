@@ -80,8 +80,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Entity.cs" />
-    <Compile Include="GrindBot\GrindBot.cs" />
+    <Compile Include="Bots\GrindBot.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Managers\PathManager.cs" />
     <Compile Include="Managers\TimerManager.cs" />
     <Compile Include="Task.cs" />
     <Compile Include="Managers\TaskManager.cs" />

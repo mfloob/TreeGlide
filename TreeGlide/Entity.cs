@@ -28,11 +28,11 @@ namespace TreeGlide
         }
         #endregion
 
-        public Entity(int mem, MemoryManager memoryManager)
+        public Entity(int mem, MemoryManager memoryManager, Movement movement)
         {
             this.mem = mem;
             this.memoryManager = memoryManager;
-            this.movement = MainWindow.movement;
+            this.movement = movement;
             this.id = GetID();
         }
 

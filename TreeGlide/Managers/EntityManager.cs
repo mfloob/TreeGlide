@@ -7,6 +7,7 @@ namespace TreeGlide
     public class EntityManager
     {
         private MemoryManager memoryManager;
+        private Movement movement;
         private List<int> attackList;
 
         #region Offsets
@@ -22,9 +23,10 @@ namespace TreeGlide
         }
         #endregion
 
-        public EntityManager(MemoryManager memoryManager)
+        public EntityManager(MemoryManager memoryManager, Movement movement)
         {
             this.memoryManager = memoryManager;
+            this.movement = movement;
             attackList = new List<int>();
         }
 
@@ -41,7 +43,7 @@ namespace TreeGlide
 
                 int entityType = this.memoryManager.ReadValue<int>(offsetArr);                  
                 if (entityType == 19208360)
-                    entities.Add(new Entity(i, memoryManager));
+                    entities.Add(new Entity(i, memoryManager, movement));
                 offsetArr[2] = i + 0x4;
             }            
             return entities;

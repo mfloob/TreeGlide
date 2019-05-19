@@ -19,7 +19,7 @@
                     <Label Content="Process:" HorizontalAlignment="Left" Height="15" VerticalAlignment="Top" Width="45" Margin="10,1,0,0" Padding="5,0"/>
                     <Label x:Name="ProcessStatus_Label" Content="Status" HorizontalAlignment="Left" Height="15" VerticalAlignment="Top" Width="62" Margin="55,1,0,0" Foreground="#FF7AE875" Padding="0,0,5,0"/>
                     <Label Content="LocalPlayer:" HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="61" Margin="10,16,0,0" Padding="5,0"/>
-                    <Label x:Name="LocalPlayerStatus_Label" Content="Not Found" HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="62" Margin="71,16,0,0" Foreground="Red" Padding="0,0,5,0"/>
+                    <Label x:Name="LocalPlayerStatus_Label" Content="Null" HorizontalAlignment="Left" Height="19" VerticalAlignment="Top" Width="62" Margin="71,16,0,0" Foreground="Red" Padding="0,0,5,0"/>
                 </Grid>
             </TabItem>
             <TabItem x:Name="MobPickerTabItem" Header="Mob List" Background="#FF252526" FontSize="10" Controls:ControlsHelper.HeaderFontSize="18" Height="29" VerticalAlignment="Top" Margin="0,0,0,-1">
@@ -42,6 +42,13 @@
                     <Label x:Name="xCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="18,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
                     <Label x:Name="yCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="80,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
                     <Label x:Name="zCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="145,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
+                    <Button x:Name="PathNew_Button" Content="New" HorizontalAlignment="Left" Height="26" Margin="306,5,0,0" VerticalAlignment="Top" Width="62" BorderThickness="0" Focusable="False" Click="PathNew_Button_Click"/>
+                    <Button x:Name="PathSave_Button" Content="Save" HorizontalAlignment="Left" Height="26" Margin="306,36,0,0" VerticalAlignment="Top" Width="62" BorderThickness="0" Focusable="False" RenderTransformOrigin="-0.366,1.564"/>
+                    <ComboBox x:Name="Path_DropDown" HorizontalAlignment="Left" Height="25" Margin="10,5,0,0" VerticalAlignment="Top" Width="182" Focusable="False"/>
+                    <ScrollViewer x:Name="PathLog_Scroller" HorizontalAlignment="Left" Height="158" Margin="0,84,-3,0" VerticalAlignment="Top" Width="381" VerticalScrollBarVisibility="Auto"  BorderBrush="#FF686868" Grid.IsSharedSizeScope="True" Focusable="False" SnapsToDevicePixels="True" Padding="0" BorderThickness="0">
+                        <ItemsControl x:Name="Path_LogBox" BorderThickness="0" BorderBrush="#FFB9B9B9" Padding="0,5,0,0" Width="364" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="1003" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="Path_LogBox_SizeChanged" Margin="10,0,0,0" Focusable="False" IsTabStop="False" FontSize="10"/>
+                    </ScrollViewer>
+                    <Frame Content="" HorizontalAlignment="Left" Height="6" Margin="10,78,0,0" VerticalAlignment="Top" Width="358" BorderThickness="0,0,0,1" Foreground="{x:Null}" BorderBrush="#FF686868" Focusable="False"/>
                 </Grid>
             </TabItem>
         </TabControl>

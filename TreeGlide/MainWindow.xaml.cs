@@ -38,6 +38,7 @@ namespace TreeGlide
         public static EntityManager entityManager;
         public static Logger logger;
         public static TimerManager timerManager;
+        public static PathManager pathManager;
 
         #region Offsets
         #endregion
@@ -61,8 +62,9 @@ namespace TreeGlide
         {
             memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
             localPlayer = new LocalPlayer(memoryManager);
-            entityManager = new EntityManager(memoryManager);
             movement = new Movement(localPlayer);
+            entityManager = new EntityManager(memoryManager, movement);
+            pathManager = new PathManager(timerManager, localPlayer, Path_LogBox);
         }
 
         private void StartProcessCheckTimer()
@@ -95,7 +97,7 @@ namespace TreeGlide
             }
             else
             {
-                ProcessStatus_Label.Content = "Not Found";
+                ProcessStatus_Label.Content = "Null";
                 ProcessStatus_Label.Foreground = Brushes.Red;
                 attached = false;
                 if (attachedLogged)
@@ -206,7 +208,7 @@ namespace TreeGlide
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot();
             DispatcherTimer botTimer = timerManager.CreateTimer(50, true);
-            botTimer.Tick += (s, e1) => { botTimer_Tick(sender, e, bot); };
+            botTimer.Tick += (s, e1) => { botTimer_Tick(s, e1, bot); };
             botTimer.Start();
             running = true;
         }       
@@ -227,8 +229,9 @@ namespace TreeGlide
             running = false;
         }
 
-         #region MobList Controls
+         #region Controls
         private void LogBox_SizeChanged(object sender, SizeChangedEventArgs e) => LogScroller.ScrollToBottom();
+        private void Path_LogBox_SizeChanged(object sender, SizeChangedEventArgs e) => PathLog_Scroller.ScrollToBottom();
 
         private void RefreshEntityList_Button_Click(object sender, RoutedEventArgs e) => RefreshEntities();
 
@@ -267,5 +270,9 @@ namespace TreeGlide
         }
         #endregion
 
+        private void PathNew_Button_Click(object sender, RoutedEventArgs e)
+        {
+            pathManager.StartCreatePath();
+        }
     }
 }
