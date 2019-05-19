@@ -134,6 +134,7 @@ namespace TreeGlide
                     attached = true;
                     logger.Log("Process found. Attached.");
                     attachedLogged = true;
+                    SetLocalPlayerStatusLabel(localFound);
                 }
                 else
                 {                    
@@ -152,21 +153,21 @@ namespace TreeGlide
         {
             if (running)
                 return;
-            else if (!localFound)
-            {
-                logger.Log("No LocalPlayer found");
-                return;
-            }
             else if (entityManager.AttackListEmpty())
             {
                 logger.Log("Attack list empty.");
+                return;
+            }
+            else if (!localFound)
+            {
+                logger.Log("No LocalPlayer found.");
                 return;
             }
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot();
             bot.OnStart();
             running = true;
-            DispatcherTimer botTimer = Timer(100, true);
+            DispatcherTimer botTimer = Timer(50, true);
             botTimer.Tick += (s, e1) => { botTimer_Tick(sender, e, bot); };
             botTimer.Start();
         }       
