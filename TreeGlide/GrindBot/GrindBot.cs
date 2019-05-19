@@ -65,7 +65,7 @@ namespace TreeGlide
             target = entityManager.NearestEntity();
             if (target == null)
             {
-                Console.WriteLine("Target is Null");
+                logger.Log("Target is null.");
                 return false;
             }
 
@@ -85,7 +85,11 @@ namespace TreeGlide
                 attackCount++;
 
             if (moveCount > 10 || attackCount > 10)
+            {
+                moveCount = 0;
+                attackCount = 0;
                 return true;
+            }
 
             return false;
         }

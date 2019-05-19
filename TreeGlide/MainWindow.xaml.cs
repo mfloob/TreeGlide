@@ -150,8 +150,18 @@ namespace TreeGlide
 
         private void Start_Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!localFound || running)
+            if (running)
                 return;
+            else if (!localFound)
+            {
+                logger.Log("No LocalPlayer found");
+                return;
+            }
+            else if (entityManager.AttackListEmpty())
+            {
+                logger.Log("Attack list empty.");
+                return;
+            }
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot();
             bot.OnStart();
@@ -176,16 +186,10 @@ namespace TreeGlide
             running = false;
         }
 
-        #region Mob List Controls
-        private void LogBox_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            LogScroller.ScrollToBottom();
-        }
+         #region MobList Controls
+        private void LogBox_SizeChanged(object sender, SizeChangedEventArgs e) => LogScroller.ScrollToBottom();
 
-        private void RefreshEntityList_Button_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshEntities();
-        }
+        private void RefreshEntityList_Button_Click(object sender, RoutedEventArgs e) => RefreshEntities();
 
         private void AddEnemy_Button_Click(object sender, RoutedEventArgs e)
         {
@@ -208,28 +212,18 @@ namespace TreeGlide
             }
         }
 
-        private void EnemyNearby_ListBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            EnemyNearby_ListBox.SelectedIndex = -1;
-        }
-
-        private void AttackEnemy_ListBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            AttackEnemy_ListBox.SelectedIndex = -1;
-        }
-
+        private void AttackEnemy_ListBox_LostFocus(object sender, RoutedEventArgs e) => AttackEnemy_ListBox.SelectedIndex = -1;
         private void AttackEnemy_ListBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
             AttackEnemy_ListBox.SelectedIndex = -1;
             EnemyNearby_ListBox.SelectedIndex = -1;
         }
-
+        private void EnemyNearby_ListBox_LostFocus(object sender, RoutedEventArgs e) => EnemyNearby_ListBox.SelectedIndex = -1;
         private void EnemyNearby_ListBox_MouseDown(object sender, MouseButtonEventArgs e)
         {
             AttackEnemy_ListBox.SelectedIndex = -1;
             EnemyNearby_ListBox.SelectedIndex = -1;
         }
-
         #endregion
 
     }

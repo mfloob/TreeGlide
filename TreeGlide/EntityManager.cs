@@ -27,7 +27,9 @@ namespace TreeGlide
             this.memoryManager = memoryManager;
             attackList = new List<int>();
         }
-        
+
+        public bool AttackListEmpty() => attackList.Count == 0;
+
         public List<Entity> GetEntities()
         {
             List<Entity> entities = new List<Entity>();
@@ -59,15 +61,9 @@ namespace TreeGlide
             return entityList;
         }
 
-        public void AddAttackList(int entityId)
-        {
-            this.attackList.Add(entityId);
-        }
+        public void AddAttackList(int entityId) => this.attackList.Add(entityId);
 
-        public void RemoveAttackList(int entityId)
-        {
-            this.attackList.Remove(entityId);
-        }
+        public void RemoveAttackList(int entityId) => this.attackList.Remove(entityId);
 
         public Entity NearestEntity()
         {
