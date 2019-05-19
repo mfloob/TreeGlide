@@ -110,7 +110,7 @@ public class InputManager
     {
         //send key data
         rawSend_Key(key, ActionFlags.KEYEVENTF_SCANCODE);
-        Thread.Sleep(75);
+        Thread.Sleep(50);
         rawSend_Key(key, ActionFlags.KEYEVENTF_KEYUP | ActionFlags.KEYEVENTF_SCANCODE);
     }
     public static void CastKeyDown(short key)

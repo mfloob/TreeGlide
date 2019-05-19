@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using MahApps.Metro.Controls;
 using System.Windows.Threading;
 using System.Diagnostics;
+using TreeGlide.Managers;
 
 namespace TreeGlide
 {
@@ -28,15 +29,15 @@ namespace TreeGlide
         private bool processOpen;
         private bool attached;
         private bool attachedLogged;
-        private bool localFound;
         private bool localLogged;
         private bool running;
+        public static bool localFound;
         public static MemoryManager memoryManager;
         public static LocalPlayer localPlayer;
         public static Movement movement;
         public static EntityManager entityManager;
         public static Logger logger;
-        public List<DispatcherTimer> timerList;
+        public static TimerManager timerManager;
 
         #region Offsets
         #endregion
@@ -50,11 +51,32 @@ namespace TreeGlide
         private void Initialize()
         {
             logger = new Logger(LogBox);
-            logger.Log("Initializing...");
-            timerList = new List<DispatcherTimer>();
-            DispatcherTimer processCheckTimer = Timer(500, false);
+            logger.Log("Waiting for process...");
+            timerManager = new TimerManager();
+            StartProcessCheckTimer();
+            StartCoordsTimer();
+        }
+
+        private void CreateManagers()
+        {
+            memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
+            localPlayer = new LocalPlayer(memoryManager);
+            entityManager = new EntityManager(memoryManager);
+            movement = new Movement(localPlayer);
+        }
+
+        private void StartProcessCheckTimer()
+        {
+            DispatcherTimer processCheckTimer = timerManager.CreateTimer(500, false);
             processCheckTimer.Tick += processCheckTimer_Tick;
             processCheckTimer.Start();
+        }
+
+        private void StartCoordsTimer()
+        {
+            DispatcherTimer coordsTimer = timerManager.CreateTimer(50, false);
+            coordsTimer.Tick += coordsTimer_Tick;
+            coordsTimer.Start();
         }
 
         private bool ProcessStatus()
@@ -93,7 +115,7 @@ namespace TreeGlide
                 LocalPlayerStatus_Label.Foreground = Brushes.LightGreen;
                 if (!localLogged)
                 {
-                    logger.Log("LocalPlayer intitialized.");
+                    logger.Log("LocalPlayer found! Attached to process.");
                     localLogged = true;
                 }
             }
@@ -103,36 +125,38 @@ namespace TreeGlide
                 LocalPlayerStatus_Label.Foreground = Brushes.Red;
                 if (localLogged)
                 {
-                    logger.Log("LocalPlayer not found.");
+                    logger.Log("No LocalPlayer found.");
                     localLogged = false;
                 }
             }
         }
-        #endregion
 
-        private DispatcherTimer Timer(int delay, bool addToTimerList)
+        private void SetCoordLabels(float? x, float? y, float? z, bool localFound)
         {
-            DispatcherTimer newTimer = new DispatcherTimer();
-            if (addToTimerList)
-                timerList.Add(newTimer);
-            newTimer.Interval = new TimeSpan(0, 0, 0, 0, delay);
-            return newTimer;
+            if (localFound)
+            {
+                xCoord_Label.Content = x?.ToString("F4");
+                yCoord_Label.Content = y?.ToString("F4");
+                zCoord_Label.Content = z?.ToString("F4");
+                return;
+            }
+            xCoord_Label.Content = "null";
+            yCoord_Label.Content = "null";
+            zCoord_Label.Content = "null";
         }
+        #endregion        
 
         #region TimerTicks
-        private async void processCheckTimer_Tick(object sender, EventArgs e)    //On tick checks if process is open, attaches if it is, then tries to find localPlayer
+        private async void processCheckTimer_Tick(object sender, EventArgs e)    //On tick checks if process is open; attaches if it is then tries to find localPlayer
         {
             this.processOpen = await System.Threading.Tasks.Task.Run(() => ProcessStatus());
             if (SetProcessStatusLabel(processOpen))
             {
                 if (!attached)
                 {
-                    memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
-                    localPlayer = new LocalPlayer(memoryManager);
-                    entityManager = new EntityManager(memoryManager);
-                    movement = new Movement(localPlayer);
+                    CreateManagers();
                     attached = true;
-                    logger.Log("Process found. Attached.");
+                    logger.Log("Process found! Waiting for LocalPlayer...");
                     attachedLogged = true;
                     SetLocalPlayerStatusLabel(localFound);
                 }
@@ -143,6 +167,22 @@ namespace TreeGlide
                 }
             }
         }
+
+        private async void coordsTimer_Tick(object sender, EventArgs e)
+        {
+            if (!localFound)
+            {
+                SetCoordLabels(null, null, null, false);
+                return;
+            }
+
+            float x = await System.Threading.Tasks.Task.Run(() => localPlayer.GetX());
+            float y = await System.Threading.Tasks.Task.Run(() => localPlayer.GetY());
+            float z = await System.Threading.Tasks.Task.Run(() => localPlayer.GetZ());
+
+            SetCoordLabels(x, y, z, true);
+        }
+
         private void botTimer_Tick(object sender, EventArgs e, GrindBot bot)
         {
             bot.OnTick();  
@@ -153,27 +193,28 @@ namespace TreeGlide
         {
             if (running)
                 return;
-            else if (entityManager.AttackListEmpty())
-            {
-                logger.Log("Attack list empty.");
-                return;
-            }
             else if (!localFound)
             {
                 logger.Log("No LocalPlayer found.");
                 return;
             }
+            else if (entityManager.AttackListEmpty())
+            {
+                logger.Log("Attack list empty.");
+                return;
+            }
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot();
-            bot.OnStart();
-            running = true;
-            DispatcherTimer botTimer = Timer(50, true);
+            DispatcherTimer botTimer = timerManager.CreateTimer(50, true);
             botTimer.Tick += (s, e1) => { botTimer_Tick(sender, e, bot); };
             botTimer.Start();
+            running = true;
         }       
 
         private void RefreshEntities()
         {
+            if (!localFound)
+                return;
             List<int> idList = new List<int>(entityManager.GetEntities().Select(x => x.id).Distinct());
             EnemyNearby_ListBox.ItemsSource = idList;
         }
@@ -182,8 +223,7 @@ namespace TreeGlide
         {
             if (!running)
                 return;
-            foreach (DispatcherTimer timer in timerList)
-                timer.Stop();
+            timerManager.StopTimers();
             running = false;
         }
 

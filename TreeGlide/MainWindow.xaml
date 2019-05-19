@@ -10,8 +10,8 @@
         <TabControl x:Name="TabControl" Height="297" VerticalAlignment="Top" HorizontalAlignment="Left" Width="384" >
             <TabItem x:Name="HomeTabItem" Header="Home" FontSize="10" Controls:ControlsHelper.HeaderFontSize="18" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Left" VerticalContentAlignment="Top">
                 <Grid Background="#FF252526" Margin="0,2,0,-4" VerticalAlignment="Top" HorizontalAlignment="Left" Height="257" Width="381">
-                    <Button x:Name="Start_Button" Content="{iconPacks:FontAwesome Kind=PlaySolid}" HorizontalAlignment="Left" Height="30" Margin="10,58,0,0" VerticalAlignment="Top" Width="61" Click="Start_Button_Click" Focusable="False"/>
-                    <Button x:Name="Stop_Button" Content="{iconPacks:FontAwesome Kind=StopSolid}" HorizontalAlignment="Left" Height="30" Margin="84,58,0,0" VerticalAlignment="Top" Width="61" Click="Stop_Button_Click" Focusable="False"/>
+                    <Button x:Name="Start_Button" Content="{iconPacks:FontAwesome Kind=PlaySolid}" HorizontalAlignment="Left" Height="30" Margin="10,58,0,0" VerticalAlignment="Top" Width="50" Click="Start_Button_Click" Focusable="False" BorderThickness="0" Background="#FF4E9160"/>
+                    <Button x:Name="Stop_Button" Content="{iconPacks:FontAwesome Kind=StopSolid}" HorizontalAlignment="Left" Height="30" Margin="71,58,0,0" VerticalAlignment="Top" Width="50" Click="Stop_Button_Click" Focusable="False" BorderThickness="0" Background="#FF8B4646"/>
                     <ScrollViewer x:Name="LogScroller" HorizontalAlignment="Left" Height="158" Margin="0,99,0,0" VerticalAlignment="Top" Width="381" VerticalScrollBarVisibility="Auto"  BorderBrush="#FF686868" Grid.IsSharedSizeScope="True" Focusable="False" SnapsToDevicePixels="True" Padding="0" BorderThickness="0">
                         <ItemsControl x:Name="LogBox" BorderThickness="0" BorderBrush="#FFB9B9B9" Padding="0,5,0,0" Width="364" HorizontalAlignment="Left" VerticalAlignment="Top" MaxWidth="1003" ScrollViewer.VerticalScrollBarVisibility="Auto" SizeChanged="LogBox_SizeChanged" Margin="10,0,0,0" Focusable="False" IsTabStop="False"/>
                     </ScrollViewer>
@@ -24,8 +24,8 @@
             </TabItem>
             <TabItem x:Name="MobPickerTabItem" Header="Mob List" Background="#FF252526" FontSize="10" Controls:ControlsHelper.HeaderFontSize="18" Height="29" VerticalAlignment="Top" Margin="0,0,0,-1">
                 <Grid Background="#FF252526" Margin="0,0,-105,0" HorizontalAlignment="Left" Width="379" Height="260" VerticalAlignment="Top">
-                    <ListBox x:Name="EnemyNearby_ListBox" Height="231" Margin="191,29,0,0" VerticalAlignment="Top" Padding="30,0,20,20" LostFocus="EnemyNearby_ListBox_LostFocus" MouseDown="EnemyNearby_ListBox_MouseDown" HorizontalAlignment="Left" Width="190" FontSize="11"/>
-                    <ListBox x:Name="AttackEnemy_ListBox" Height="231" VerticalAlignment="Top" Margin="0,28,0,0" Padding="20,0,30,20" BorderBrush="#FF686868" BorderThickness="0,0,1,0" LostFocus="AttackEnemy_ListBox_LostFocus" MouseDown="AttackEnemy_ListBox_MouseDown" HorizontalAlignment="Left" Width="191" FontSize="11"/>
+                    <ListBox x:Name="EnemyNearby_ListBox" Height="231" Margin="191,29,0,0" VerticalAlignment="Top" Padding="30,0,20,20" LostFocus="EnemyNearby_ListBox_LostFocus" MouseDown="EnemyNearby_ListBox_MouseDown" HorizontalAlignment="Left" Width="190" FontSize="11" Foreground="#FF39A0E6"/>
+                    <ListBox x:Name="AttackEnemy_ListBox" Height="231" VerticalAlignment="Top" Margin="0,28,0,0" Padding="20,0,30,20" BorderBrush="#FF686868" BorderThickness="0,0,1,0" LostFocus="AttackEnemy_ListBox_LostFocus" MouseDown="AttackEnemy_ListBox_MouseDown" HorizontalAlignment="Left" Width="191" FontSize="11" Foreground="#FF39A0E6"/>
                     <Label Content="Entity ID's to Attack" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top" Width="157" FontSize="14" Margin="16,0,0,0"/>
                     <Label Content="Entity ID's Nearby" Height="30" VerticalAlignment="Top" FontSize="14" Margin="225,0,0,0" HorizontalAlignment="Left" Width="135"/>
                     <Button x:Name="RefreshEntityList_Button" Content="{iconPacks:MaterialLight Kind=Refresh}" HorizontalAlignment="Left" Height="28" Margin="328,222,0,0" VerticalAlignment="Top" Width="41" BorderThickness="0" BorderBrush="{x:Null}" Focusable="False" Background="#FF3F3F46" Click="RefreshEntityList_Button_Click" RenderTransformOrigin="1.018,0.571"/>
@@ -34,7 +34,15 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Paths" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="58" Controls:ControlsHelper.HeaderFontSize="18">
-                <Grid Background="#FF252526"/>
+                <Grid Background="#FF252526">
+                    <Frame Content="" HorizontalAlignment="Left" Height="6" Margin="3,242,0,0" VerticalAlignment="Top" Width="189" BorderThickness="0,1,0,0" Foreground="{x:Null}" BorderBrush="#FF686868" Focusable="False"/>
+                    <Label Content="X" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="10" Margin="8,248,0,0" Padding="0,0" FontSize="10"/>
+                    <Label Content="Y" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="10" Margin="70,248,0,0" Padding="0,0" FontSize="10"/>
+                    <Label Content="Z" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="10" Margin="135,248,0,0" Padding="0,0" FontSize="10"/>
+                    <Label x:Name="xCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="18,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
+                    <Label x:Name="yCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="80,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
+                    <Label x:Name="zCoord_Label" Content="" HorizontalAlignment="Left" Height="14" VerticalAlignment="Top" Width="50" Margin="145,248,0,0" Padding="0,0" FontSize="10" Foreground="#FF39A0E6"/>
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

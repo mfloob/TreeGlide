@@ -13,6 +13,12 @@ namespace TreeGlide
         {
             Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck());
         }
+
+        public GrindBot()
+        {
+            OnStart();
+            logger.Log("Grind bot started.");
+        }
     }
 
     public class AttackTarget : Task
@@ -65,7 +71,7 @@ namespace TreeGlide
             target = entityManager.NearestEntity();
             if (target == null)
             {
-                logger.Log("Target is null.");
+                movement.AttackUp();
                 return false;
             }
 

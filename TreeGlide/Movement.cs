@@ -52,11 +52,12 @@ namespace TreeGlide
             return Math.Sqrt(a * a + b * b);
         }
 
-        public PointF PointOnVector(PointF point, float distance)
+        public PointF PointOnVector(PointF point, float distance)     //Sin and Cos may be backwards              
         {
             PointF destination = new PointF();
-            destination.X = (float) (localPlayer.GetX() + distance * Math.Cos(MyAngleToPoint(point)));
-            destination.Y = (float)(localPlayer.GetY() + distance * Math.Sin(MyAngleToPoint(point)));
+            double angle = MyAngleToPoint(point);
+            destination.X = (float) (localPlayer.GetX() + distance * Math.Cos(angle));
+            destination.Y = (float)(localPlayer.GetY() + distance * Math.Sin(angle));
 
             return destination;
         }
@@ -71,7 +72,7 @@ namespace TreeGlide
                 KeysUp();
                 return;
             }
-            //InputManager.CastKeyUp(space);
+            AttackUp();
             if (angle > 22.5 && angle <= 67.5)
                 MoveLeft();
             else if (angle > 67.5 && angle <= 112.5)
@@ -96,7 +97,7 @@ namespace TreeGlide
         public void Attack()
         {
             KeysUp();
-            InputManager.CastKey(space);   
+            InputManager.CastKeyDown(space);   
         }        
 
         #region Move Utilities
@@ -167,6 +168,10 @@ namespace TreeGlide
             InputManager.CastKeyUp(right);
             InputManager.CastKeyUp(down);
             InputManager.CastKeyUp(left);
+        }
+        public void AttackUp()
+        {
+            InputManager.CastKeyUp(space);
         }
         #endregion
     }

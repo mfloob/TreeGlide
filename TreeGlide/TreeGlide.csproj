@@ -82,8 +82,9 @@
     <Compile Include="Entity.cs" />
     <Compile Include="GrindBot\GrindBot.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Managers\TimerManager.cs" />
     <Compile Include="Task.cs" />
-    <Compile Include="TaskManager.cs" />
+    <Compile Include="Managers\TaskManager.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -92,8 +93,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EntityManager.cs" />
-    <Compile Include="InputManager.cs" />
+    <Compile Include="Managers\EntityManager.cs" />
+    <Compile Include="Managers\InputManager.cs" />
     <Compile Include="LocalPlayer.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -101,7 +102,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MemoryManager.cs" />
+    <Compile Include="Managers\MemoryManager.cs" />
     <Compile Include="Movement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

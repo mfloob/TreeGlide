@@ -7,12 +7,10 @@ namespace TreeGlide
     abstract public class TaskManager
     {
         private List<Task> taskList = new List<Task>();
+        public Logger logger = MainWindow.logger;
         public abstract void OnStart();
 
-        public async Task<T> Run<T>(T x)
-        {
-            return await System.Threading.Tasks.Task.Run(() => x);
-        }
+        private async Task<T> Run<T>(T x) => await System.Threading.Tasks.Task.Run(() => x);
 
         public void Add(params Task[] tasks)
         {
