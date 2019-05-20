@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -32,6 +34,7 @@ namespace TreeGlide.Managers
             private List<Checkpoint> checkpointList;
             private Logger logger;
             private LocalPlayer localPlayer;
+            private string name;
             public Path(LocalPlayer localPlayer, Logger logger)
             {
                 this.logger = logger;
@@ -41,9 +44,9 @@ namespace TreeGlide.Managers
 
             public void Add()
             {
-                Checkpoint checkpoint = new Checkpoint(localPlayer.GetX(), localPlayer.GetY(), localPlayer.GetZ());
+                Checkpoint checkpoint = new Checkpoint(localPlayer.X, localPlayer.Y, localPlayer.Z);
                 checkpointList.Add(checkpoint);
-                logger.Log(String.Format("Added checkpoint at: {0}.", checkpoint.ToString()));
+                logger.Log(String.Format("New checkpoint at: {0}.", checkpoint));
             }
 
             public List<Checkpoint> GetCheckpointsList()
@@ -55,9 +58,9 @@ namespace TreeGlide.Managers
             {
                 Checkpoint closest = null;
                 float closestDistance = 999999;
-                float localX = localPlayer.GetX();
-                float localY = localPlayer.GetY();
-                float localZ = localPlayer.GetZ();
+                float localX = localPlayer.X;
+                float localY = localPlayer.Y;
+                float localZ = localPlayer.Z;
 
                 foreach (Checkpoint checkpoint in this.checkpointList)
                 {
@@ -73,30 +76,60 @@ namespace TreeGlide.Managers
                 }
                 return closest;
             }
+            public string SetName(string name) => this.name = name;
+            public string GetName() => this.name;
 
         }
 
         private LocalPlayer localPlayer;
         private TimerManager timerManager;
         private Logger logger;
+        private bool running;
+        private Path currentPath;
+        private List<Path> pathList;
+
         private async Task<T> Run<T>(T x) => await System.Threading.Tasks.Task.Run(() => x);
         public PathManager(TimerManager timerManager, LocalPlayer localPlayer, ItemsControl logBox)
         {
             this.timerManager = timerManager;
             this.localPlayer = localPlayer;
             this.logger = new Logger(logBox);
-            logger.Log("Pathmanager initialized.");
+            logger.Log("PathManager initialized.");
         }      
 
         public void StartCreatePath()
         {
-            if (!MainWindow.localFound)
+            if (running)
                 return;
             Path path = new Path(localPlayer, logger);
-            DispatcherTimer pathTimer = timerManager.CreateTimer(50, true);
+            this.currentPath = path;
+            DispatcherTimer pathTimer = timerManager.CreateTimer(75, true);
             pathTimer.Tick += (s, e1) => { pathTimer_Tick(s, e1, path); };
             logger.Log("Creating path... Move in any direction to add checkpoints.");
             pathTimer.Start();
+            this.running = true;
+        }
+
+        public void StopCreatePath()
+        {
+            timerManager.StopTimers();
+            logger.Log("Path has been generated. Press Save to save this path.");
+            this.running = false;
+        }
+
+        public async void SavePath(string name)
+        {
+            string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
+            StreamWriter outputFile;
+
+            using (outputFile = new StreamWriter(System.IO.Path.Combine(directory, name + ".txt")))
+            {
+                foreach (Checkpoint checkpoint in this.currentPath.GetCheckpointsList())
+                    await outputFile.WriteLineAsync(checkpoint.ToString());
+            }
+            logger.Log("Path saved in:\n" + System.IO.Path.GetFullPath(directory));
+            this.currentPath.SetName(name);
         }
 
         private async void pathTimer_Tick(object sender, EventArgs e, Path path)
@@ -109,10 +142,21 @@ namespace TreeGlide.Managers
                 path.Add();
                 return;
             }
-            var closestCheckPointDistance = await Run(path.ClosestCheckpoint().distanceFromMe);
-            if (closestCheckPointDistance < 150f)    //Make distance selectable
+            var closestCheckpointDistance = await Run(path.ClosestCheckpoint().distanceFromMe);
+            if (closestCheckpointDistance < 150f)    //Make distance selectable
                 return;
             path.Add();
         }
+
+        //public List<Path> GetPaths()
+        //{
+        //    string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        //    string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
+            
+        //    foreach (Path path in GeneratePaths())
+        //    {
+        //        pathList.Add(path);
+        //    }
+        //}
     }
 }

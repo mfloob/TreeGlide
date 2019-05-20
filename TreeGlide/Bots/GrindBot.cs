@@ -21,7 +21,7 @@ namespace TreeGlide
         }
     }
 
-    public class AttackTarget : Task
+    internal class AttackTarget : Task
     {
         public override bool Validate()
         {
@@ -38,7 +38,7 @@ namespace TreeGlide
         }
     }
 
-    public class MoveToNearestEnemy : Task
+    internal class MoveToNearestEnemy : Task
     {
         public override bool Validate()
         {
@@ -59,7 +59,7 @@ namespace TreeGlide
         }
     }
 
-    public class StuckCheck : Task
+    internal class StuckCheck : Task
     {
         private PointF oldCoords;
         private int oldEnemyHealth;

@@ -16,6 +16,7 @@ using MahApps.Metro.Controls;
 using System.Windows.Threading;
 using System.Diagnostics;
 using TreeGlide.Managers;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace TreeGlide
 {
@@ -58,6 +59,7 @@ namespace TreeGlide
             StartCoordsTimer();
         }
 
+
         private void CreateManagers()
         {
             memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
@@ -65,6 +67,7 @@ namespace TreeGlide
             movement = new Movement(localPlayer);
             entityManager = new EntityManager(memoryManager, movement);
             pathManager = new PathManager(timerManager, localPlayer, Path_LogBox);
+            this.Path_DropDown.ItemsSource = pathManager.GetPaths();
         }
 
         private void StartProcessCheckTimer()
@@ -182,6 +185,9 @@ namespace TreeGlide
             float y = await System.Threading.Tasks.Task.Run(() => localPlayer.GetY());
             float z = await System.Threading.Tasks.Task.Run(() => localPlayer.GetZ());
 
+            if (x == 0 || y == 0 || z == 0)
+                Console.WriteLine(String.Format("One of these is zero: {0}, {1}, {2}", x, y, z));
+
             SetCoordLabels(x, y, z, true);
         }
 
@@ -272,7 +278,25 @@ namespace TreeGlide
 
         private void PathNew_Button_Click(object sender, RoutedEventArgs e)
         {
+            if (!localFound)
+                return;
             pathManager.StartCreatePath();
+            PathStop_Button.Visibility = Visibility.Visible;
+        }
+        private void PathStop_Button_Click(object sender, RoutedEventArgs e)
+        {
+            pathManager.StopCreatePath();
+            PathStop_Button.Visibility = Visibility.Collapsed;
+            PathSave_Button.Visibility = Visibility.Visible;
+        }
+
+        private async void PathSave_Button_Click(object sender, RoutedEventArgs e)
+        {
+            var result = await this.ShowInputAsync("", "Name: ");
+            if (result == null)
+                return;
+            PathSave_Button.Visibility = Visibility.Collapsed;
+            pathManager.SavePath(result);
         }
     }
 }

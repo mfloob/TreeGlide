@@ -9,9 +9,9 @@ namespace TreeGlide
     public class LocalPlayer
     {
         private int health;
-        private float xCoord;
-        private float yCoord;
-        private float zCoord;
+        public float X;
+        public float Y;
+        public float Z;
         private float attackSpeed;
         private float movementSpeed;
         private bool isFound;
@@ -39,9 +39,9 @@ namespace TreeGlide
         public void UpdateValues()
         {
             this.health = GetHealth();
-            this.xCoord = GetX();
-            this.yCoord = GetY();
-            this.zCoord = GetZ();
+            this.X = GetX();
+            this.Y = GetY();
+            this.Z = GetZ();
             this.attackSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.ATTACKSPEED });
             this.movementSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.MOVESPEED });
         }
@@ -61,24 +61,24 @@ namespace TreeGlide
 
         public float GetX()
         {
-            this.xCoord = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_X });
-            return this.xCoord;
+            this.X = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_X });
+            return this.X;
         }
         public float GetY()
         {
-            this.yCoord = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Y });
-            return this.yCoord;
+            this.Y = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Y });
+            return this.Y;
         }
         public float GetZ()
         {
-            this.zCoord = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Z });
-            return this.zCoord;
+            this.Z = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Z });
+            return this.Z;
         }
         public bool IsFound()
         {
             this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19200784;
-            if (isFound)
-                UpdateValues();
+            //if (isFound)
+            //    UpdateValues();
             return isFound;
         }
     }
