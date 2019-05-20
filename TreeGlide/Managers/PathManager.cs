@@ -148,15 +148,16 @@ namespace TreeGlide.Managers
             path.Add();
         }
 
-        //public List<Path> GetPaths()
+        //public void GetPaths()
         //{
         //    string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         //    string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
-            
-        //    foreach (Path path in GeneratePaths())
+
+        //    foreach (Path path in pathList)
         //    {
         //        pathList.Add(path);
         //    }
+
         //}
     }
 }

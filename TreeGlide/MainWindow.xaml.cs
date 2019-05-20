@@ -17,6 +17,8 @@ using System.Windows.Threading;
 using System.Diagnostics;
 using TreeGlide.Managers;
 using MahApps.Metro.Controls.Dialogs;
+using System.IO;
+using System.Reflection;
 
 namespace TreeGlide
 {
@@ -55,6 +57,7 @@ namespace TreeGlide
             logger = new Logger(LogBox);
             logger.Log("Waiting for process...");
             timerManager = new TimerManager();
+            FillPathDropDown();
             StartProcessCheckTimer();
             StartCoordsTimer();
         }
@@ -67,7 +70,14 @@ namespace TreeGlide
             movement = new Movement(localPlayer);
             entityManager = new EntityManager(memoryManager, movement);
             pathManager = new PathManager(timerManager, localPlayer, Path_LogBox);
-            this.Path_DropDown.ItemsSource = pathManager.GetPaths();
+        }
+
+        private void FillPathDropDown()
+        {
+            string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
+            string[] files = Directory.GetFiles(directory);
+            this.Path_DropDown.ItemsSource = files;
         }
 
         private void StartProcessCheckTimer()
@@ -297,6 +307,7 @@ namespace TreeGlide
                 return;
             PathSave_Button.Visibility = Visibility.Collapsed;
             pathManager.SavePath(result);
+            FillPathDropDown();
         }
     }
 }
