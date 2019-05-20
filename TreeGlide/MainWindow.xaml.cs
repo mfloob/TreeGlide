@@ -76,8 +76,7 @@ namespace TreeGlide
         {
             string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
-            string[] files = Directory.GetFiles(directory);
-            this.Path_DropDown.ItemsSource = files;
+            this.Path_DropDown.ItemsSource = Directory.GetFiles(directory);
         }
 
         private void StartProcessCheckTimer()
