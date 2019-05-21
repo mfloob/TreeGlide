@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -12,7 +14,7 @@ namespace TreeGlide.Managers
 {
     public class PathManager
     {
-        internal class Checkpoint
+        public class Checkpoint
         {
             public float x, y, z, distanceFromMe;
             public Checkpoint(float x, float y, float z)
@@ -28,7 +30,7 @@ namespace TreeGlide.Managers
             }
         }
 
-        internal class Path
+        public class Path
         {
 
             private List<Checkpoint> checkpointList;
@@ -41,6 +43,11 @@ namespace TreeGlide.Managers
                 this.localPlayer = localPlayer;
                 this.checkpointList = new List<Checkpoint>();
             }
+            public Path(List<Checkpoint> checkpoints, string name)
+            {
+                this.checkpointList = checkpoints;
+                this.name = name;
+            }
 
             public void Add()
             {
@@ -51,6 +58,11 @@ namespace TreeGlide.Managers
 
             public List<Checkpoint> GetCheckpointsList()
             {
+                foreach (Checkpoint checkpoint in this.checkpointList)
+                {
+                    if (checkpoint == null)
+                        return null;
+                }
                 return checkpointList;
             }
 
@@ -83,10 +95,11 @@ namespace TreeGlide.Managers
 
         private LocalPlayer localPlayer;
         private TimerManager timerManager;
-        private Logger logger;
+        public Logger logger;
         private bool running;
         private Path currentPath;
-        private List<Path> pathList;
+        private Path selectedPath;
+        //private List<Path> pathList;
 
         private async Task<T> Run<T>(T x) => await System.Threading.Tasks.Task.Run(() => x);
         public PathManager(TimerManager timerManager, LocalPlayer localPlayer, ItemsControl logBox)
@@ -103,7 +116,7 @@ namespace TreeGlide.Managers
                 return;
             Path path = new Path(localPlayer, logger);
             this.currentPath = path;
-            DispatcherTimer pathTimer = timerManager.CreateTimer(75, true);
+            DispatcherTimer pathTimer = timerManager.CreateTimer(250, true);
             pathTimer.Tick += (s, e1) => { pathTimer_Tick(s, e1, path); };
             logger.Log("Creating path... Move in any direction to add checkpoints.");
             pathTimer.Start();
@@ -148,16 +161,37 @@ namespace TreeGlide.Managers
             path.Add();
         }
 
-        //public void GetPaths()
-        //{
-        //    string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        //    string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
+        public async void SetPath(string name)
+        {
+            string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string directory = (Directory.CreateDirectory(assemblyPath + "/Paths").ToString() + "/" + name + ".txt");
+            var checkpoints = new List<Checkpoint>();
 
-        //    foreach (Path path in pathList)
-        //    {
-        //        pathList.Add(path);
-        //    }
+            using (var stream = new StreamReader(directory))
+            {
+                string line;
+                while ((line = await stream.ReadLineAsync()) != null)
+                    checkpoints.Add(ConvertCheckpoint(line));
+            }
 
-        //}
+            var path = new Path(checkpoints, name);
+            if (path.GetCheckpointsList() == null)
+            {
+                logger.Log("Error: Selected path checkpointList is null.");
+                return;
+            }
+            logger.Log(name + " successfully loaded.");
+            this.selectedPath = path;
+        }
+
+        public Checkpoint ConvertCheckpoint(string line)
+        {
+            var matches = Regex.Matches(line, @"([-+]?[0-9]*\.?[0-9]+)");
+            if (matches.Count != 3)
+                return null;
+            var checkpoint = new Checkpoint(Convert.ToSingle(matches[0].Value), Convert.ToSingle(matches[1].Value), Convert.ToSingle(matches[2].Value));
+
+            return checkpoint;
+        }
     }
 }

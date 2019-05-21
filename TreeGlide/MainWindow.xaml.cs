@@ -76,7 +76,11 @@ namespace TreeGlide
         {
             string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string directory = Directory.CreateDirectory(assemblyPath + "/Paths").ToString();
-            this.Path_DropDown.ItemsSource = Directory.GetFiles(directory);
+            string[] files = Directory.GetFiles(directory, "*.txt");
+            string[] names = new string[files.Length];            
+            for (int i = 0; i < names.Length; i++)
+                names[i] = System.IO.Path.GetFileName(files[i]).Substring(0, System.IO.Path.GetFileName(files[i]).Length - 4);
+            this.Path_DropDown.ItemsSource = names;
         }
 
         private void StartProcessCheckTimer()
@@ -307,6 +311,11 @@ namespace TreeGlide
             PathSave_Button.Visibility = Visibility.Collapsed;
             pathManager.SavePath(result);
             FillPathDropDown();
+        }
+
+        private void Path_DropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            pathManager.SetPath(Path_DropDown.SelectedItem.ToString());
         }
     }
 }
