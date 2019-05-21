@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TreeGlide.Managers;
 
 namespace TreeGlide
 {
@@ -14,12 +15,28 @@ namespace TreeGlide
             Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck());
         }
 
-        public GrindBot()
+        public GrindBot(PathManager pathManager)
         {
             OnStart();
             logger.Log("Grind bot started.");
         }
     }
+
+    //internal class MoveAlongPath : Task
+    //{
+    //    public override bool Validate()
+    //    {
+    //        if (target != null)
+    //            return false;
+
+    //    }
+
+    //    public override bool Execute()
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+
+    //}
 
     internal class AttackTarget : Task
     {

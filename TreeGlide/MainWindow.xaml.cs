@@ -49,8 +49,7 @@ namespace TreeGlide
         {
             logger = new Logger(LogBox);
             logger.Log("Waiting for process...");
-            timerManager = new TimerManager();
-            FillPathDropDown();
+            timerManager = new TimerManager();            
             StartProcessCheckTimer();
             StartCoordsTimer();
         }
@@ -62,7 +61,8 @@ namespace TreeGlide
             localPlayer = new LocalPlayer(memoryManager);
             movement = new Movement(localPlayer);
             entityManager = new EntityManager(memoryManager, movement);
-            pathManager = new PathManager(timerManager, localPlayer, Path_LogBox);
+            pathManager = new PathManager(timerManager, localPlayer, movement, Path_LogBox);
+            FillPathDropDown();
         }
 
         private void FillPathDropDown()
@@ -218,7 +218,7 @@ namespace TreeGlide
                 return;
             }
             InputManager.SetActiveWindow("Client_tos");
-            GrindBot bot = new GrindBot();
+            GrindBot bot = new GrindBot(pathManager);
             DispatcherTimer botTimer = timerManager.CreateTimer(50, true);
             botTimer.Tick += (s, e1) => { botTimer_Tick(s, e1, bot); };
             botTimer.Start();
@@ -308,6 +308,8 @@ namespace TreeGlide
 
         private void Path_DropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            //if (pathManager == null)
+            //    return;
             pathManager.SetPath(Path_DropDown.SelectedItem.ToString());
         }
     }

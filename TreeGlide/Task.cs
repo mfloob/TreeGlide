@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Drawing;
-
+using TreeGlide.Managers;
 
 namespace TreeGlide
 {
@@ -13,6 +13,7 @@ namespace TreeGlide
 
         public EntityManager entityManager;
         public LocalPlayer localPlayer;
+        public PathManager pathManager;
         public Movement movement;
         public Entity target;
         public Logger logger;
@@ -21,6 +22,7 @@ namespace TreeGlide
         {
             this.entityManager = MainWindow.entityManager;
             this.localPlayer = MainWindow.localPlayer;
+            this.pathManager = MainWindow.pathManager;
             this.movement = MainWindow.movement;
             this.logger = MainWindow.logger;
         }
