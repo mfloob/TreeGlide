@@ -212,11 +212,11 @@ namespace TreeGlide
                 logger.Log("No LocalPlayer found.");
                 return;
             }
-            else if (entityManager.AttackListEmpty())
-            {
-                logger.Log("Attack list empty.");
-                return;
-            }
+            //else if (entityManager.AttackListEmpty())
+            //{
+            //    logger.Log("Attack list empty.");
+            //    return;
+            //}
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot(pathManager);
             DispatcherTimer botTimer = timerManager.CreateTimer(50, true);

@@ -255,39 +255,44 @@ namespace TreeGlide.Managers
         public void Initialize()
         {
             currentPoint = currentPath.ClosestCheckpoint();
-            destination = currentPoint.child;
+            SetDestinationInOrder();
+        }
+
+        private bool SetDestinationInOrder()
+        {
+            if (currentPoint.id == currentPath.checkpointList.Count && destination != currentPath.checkpointList[currentPoint.id - 1])
+                backwards = true;
+            else if (currentPoint.id == currentPath.checkpointList[0].id && destination != currentPath.checkpointList[currentPoint.id + 1])
+                backwards = false;
+            destination = backwards ? currentPath.checkpointList[currentPoint.id - 1] : currentPath.checkpointList[currentPoint.id + 1];
+            if (destination != null)
+                return true;
+            return false;
         }
 
         public void MoveAlongPath()
         {
-            if (!backwards && (destination == null))
-            {
-                backwards = !backwards;
-                destination = currentPoint.parent;
-                return;
-            }
-            if (backwards && (destination == null))
-            {
-                backwards = !backwards;
-                destination = currentPoint.child;
-                return;
-            }
             if (destination.DistanceFromMe(localPlayer) <= 40f)
-            {
                 currentPoint = destination;
-                destination = backwards ? currentPoint.parent : currentPoint.child;
-            }
-            if (destination == null)
+            if (!SetDestinationInOrder())
                 return;
             if (currentPoint.ConnectedWith(destination))
-                movement.MoveToPoint(destination, 40f);            
-            //NavigateConnected(destination);
+            {
+                movement.MoveToPoint(destination, 40f);
+                return;
+            }
+            NavigateConnected(destination);
         }
 
         private void NavigateConnected(Checkpoint destination)
         {
             if (currentPoint == destination)
                 return;
+            if (destination.DistanceFromMe(localPlayer) <= 40f)
+            {
+                currentPoint = destination;
+                return;
+            }
             if (currentPoint.ConnectedWith(destination))
             {
                 movement.MoveToPoint(destination, 40f);

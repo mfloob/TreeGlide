@@ -12,7 +12,7 @@ namespace TreeGlide
     {
         public override void OnStart()
         {
-            Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck(), new MoveAlongPath());
+            Add(/*new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck(), */new MoveAlongPath());
         }
 
         public GrindBot(PathManager pathManager)
@@ -27,7 +27,7 @@ namespace TreeGlide
     {
         public override bool Validate()
         {
-            target = entityManager.GetTarget(100f);
+            //target = entityManager.GetTarget(100f);
             if (target != null)
                 return false;
             return true;
