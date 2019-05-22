@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-
+using static TreeGlide.Managers.PathManager;
 
 namespace TreeGlide
 {
@@ -72,6 +72,39 @@ namespace TreeGlide
                 KeysUp();
                 return;
             }
+            AttackUp();
+            if (angle > 22.5 && angle <= 67.5)
+                MoveLeft();
+            else if (angle > 67.5 && angle <= 112.5)
+                MoveDownLeft();
+            else if (angle > 112.5 && angle <= 157.5)
+                MoveDown();
+            else if (angle > 157.5 && angle <= 202.5)
+                MoveDownRight();
+            else if (angle > 202.5 && angle <= 247.5)
+                MoveRight();
+            else if (angle > 247.5 && angle <= 292.5)
+                MoveUpRight();
+            else if (angle > 292.5 && angle <= 337.5)
+                MoveUp();
+            else if (angle > 337.5 || angle <= 22.5)
+                MoveUpLeft();
+            else
+                Console.WriteLine("Invalid angle: " + MyAngleToPoint(destination));
+            return;
+        }
+
+        public void MoveToPoint(Checkpoint checkpoint, float maxDistance)
+        {
+            PointF destination = new PointF(checkpoint.X, checkpoint.Y);
+            double angle = MyAngleToPoint(destination);
+            double distance = MyDistanceToPoint(destination);
+
+            //if (distance < maxDistance)
+            //{
+            //    KeysUp();
+            //    return;
+            //}
             AttackUp();
             if (angle > 22.5 && angle <= 67.5)
                 MoveLeft();

@@ -12,37 +12,40 @@ namespace TreeGlide
     {
         public override void OnStart()
         {
-            Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck());
+            Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck(), new MoveAlongPath());
         }
 
         public GrindBot(PathManager pathManager)
         {
             OnStart();
+            pathManager.Initialize();
             logger.Log("Grind bot started.");
         }
     }
 
-    //internal class MoveAlongPath : Task
-    //{
-    //    public override bool Validate()
-    //    {
-    //        if (target != null)
-    //            return false;
+    internal class MoveAlongPath : Task
+    {
+        public override bool Validate()
+        {
+            target = entityManager.GetTarget(100f);
+            if (target != null)
+                return false;
+            return true;
+        }
 
-    //    }
+        public override bool Execute()
+        {
+            pathManager.MoveAlongPath();
+            return true;
+        }
 
-    //    public override bool Execute()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //}
+    }
 
     internal class AttackTarget : Task
     {
         public override bool Validate()
         {
-            target = entityManager.NearestEntity();
+            target = entityManager.GetTarget(100f);
             if (target == null)
                 return false;
             return target.GetDistance() < 20f;
@@ -59,7 +62,7 @@ namespace TreeGlide
     {
         public override bool Validate()
         {
-            target = entityManager.NearestEntity();
+            target = entityManager.GetTarget(100f);
             if (target == null)
                 return false;
             if (target.GetDistance() >= 20f)
@@ -85,7 +88,7 @@ namespace TreeGlide
 
         public override bool Validate()
         {
-            target = entityManager.NearestEntity();
+            target = entityManager.GetTarget(100f);
             if (target == null)
             {
                 movement.AttackUp();

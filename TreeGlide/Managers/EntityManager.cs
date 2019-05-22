@@ -9,6 +9,7 @@ namespace TreeGlide
         private MemoryManager memoryManager;
         private Movement movement;
         private List<int> attackList;
+        private Entity target;
 
         #region Offsets
         private struct Offsets
@@ -31,6 +32,12 @@ namespace TreeGlide
         }
 
         public bool AttackListEmpty() => attackList.Count == 0;
+
+        public Entity GetTarget(float distance)
+        {
+            this.target = NearestEntity(distance);
+            return target;
+        }
 
         public List<Entity> GetEntities()
         {
@@ -67,7 +74,7 @@ namespace TreeGlide
 
         public void RemoveAttackList(int entityId) => this.attackList.Remove(entityId);
 
-        public Entity NearestEntity()
+        public Entity NearestEntity(float distance)
         {
             Entity closest = null;
             double closestDistance = 99999;
@@ -76,6 +83,8 @@ namespace TreeGlide
             {
                 entity.UpdateValues();
                 double entityDistance = entity.GetDistance();
+                if (entityDistance > distance)
+                    continue;
                 if (entityDistance < closestDistance)
                 {
                     closest = entity;

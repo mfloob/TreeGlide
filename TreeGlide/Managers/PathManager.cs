@@ -14,9 +14,14 @@ namespace TreeGlide.Managers
     {
         public class Checkpoint
         {
-            public int id, connectedID;
-            public float x, y, z, distanceFromMe;
+            public int id;
+            public float X { get; private set; }
+            public float Y { get; private set; }
+            public float Z { get; private set; }
+            public float distanceFromMe;
             public bool traversed = false;
+            public Checkpoint child;
+            public Checkpoint parent;
 
             public Checkpoint()
             {
@@ -24,46 +29,64 @@ namespace TreeGlide.Managers
 
             public Checkpoint(float x, float y, float z)
             {
-                this.x = x;
-                this.y = y;
-                this.z = z;
+                this.X = x;
+                this.Y = y;
+                this.Z = z;
             }
 
-            public Checkpoint(float x, float y, float z, int id, int connectedID)
+            public Checkpoint(float x, float y, float z, int id, Checkpoint parent)
             {
-                this.x = x;
-                this.y = y;
-                this.z = z;
+                this.X = x;
+                this.Y = y;
+                this.Z = z;
                 this.id = id;
-                this.connectedID = connectedID;
+                this.parent = parent;
             }
 
             public override string ToString()
             {
-                return String.Format("[{0}, {1}, {2}, {3}, {4}]", this.x.ToString("F4"), this.y.ToString("F4"), this.z.ToString("F4"), this.id, this.connectedID);
+                return String.Format("[{0}, {1}, {2}, {3}, {4}]", this.X.ToString("F4"), this.Y.ToString("F4"), this.Z.ToString("F4"), this.id, !(this.parent==null) ? parent.id : 0);
+            }
+
+            public bool ConnectedWith(Checkpoint checkpoint)
+            {
+                return (this.child == checkpoint || this.parent == checkpoint);
+            }
+
+            public float DistanceFromMe(LocalPlayer localPlayer)
+            {
+                float localX = localPlayer.X;
+                float localY = localPlayer.Y;
+                float localZ = localPlayer.Z;
+                float deltaX = this.X - localX;
+                float deltaY = this.Y - localY;
+                float deltaZ = this.Z - localZ;
+                this.distanceFromMe = (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                return this.distanceFromMe;
             }
         }
 
         public class Path
         {
-
-            private List<Checkpoint> checkpointList;
+            public List<Checkpoint> checkpointList;
             private Logger logger;
             private LocalPlayer localPlayer;
             private string name;
+
             public Path(LocalPlayer localPlayer, Logger logger)
             {
                 this.logger = logger;
                 this.localPlayer = localPlayer;
                 this.checkpointList = new List<Checkpoint>();
             }
-            public Path(List<Checkpoint> checkpoints, string name)
+            public Path(List<Checkpoint> checkpoints, LocalPlayer localPlayer, string name)
             {
                 this.checkpointList = checkpoints;
                 this.name = name;
+                this.localPlayer = localPlayer;
             }
             public string SetName(string name) => this.name = name;
-            public string GetName() => this.name;
+            public string Name => this.name;
 
             public void Add(int id)
             {
@@ -74,37 +97,19 @@ namespace TreeGlide.Managers
                     checkpoint.id = id;
                 }
                 else
-                    checkpoint = new Checkpoint(localPlayer.X, localPlayer.Y, localPlayer.Z, id, ClosestCheckpoint(false).id);
+                    checkpoint = new Checkpoint(localPlayer.X, localPlayer.Y, localPlayer.Z, id, ClosestCheckpoint());
                 checkpointList.Add(checkpoint);
                 logger.Log(String.Format("New checkpoint at: {0}.", checkpoint));
             }
 
-            public List<Checkpoint> GetCheckpointsList()
-            {
-                foreach (Checkpoint checkpoint in this.checkpointList)
-                {
-                    if (checkpoint == null)
-                        return null;
-                }
-                return checkpointList;
-            }
-
-            public Checkpoint ClosestCheckpoint(bool traversed)
+            public Checkpoint ClosestCheckpoint()
             {
                 Checkpoint closest = null;
                 float closestDistance = 999999;
-                float localX = localPlayer.X;
-                float localY = localPlayer.Y;
-                float localZ = localPlayer.Z;
 
                 foreach (Checkpoint checkpoint in this.checkpointList)
                 {
-                    if (!(checkpoint.traversed == traversed))
-                        continue;
-                    float deltaX = checkpoint.x - localX;
-                    float deltaY = checkpoint.y - localY;
-                    float deltaZ = checkpoint.z - localZ;
-                    checkpoint.distanceFromMe = (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ);
+                    checkpoint.distanceFromMe = checkpoint.DistanceFromMe(localPlayer);
                     if (checkpoint.distanceFromMe < closestDistance)
                     {
                         closestDistance = checkpoint.distanceFromMe;
@@ -112,23 +117,7 @@ namespace TreeGlide.Managers
                     }
                 }
                 return closest;
-            }
-
-            public Checkpoint FindById(int id)
-            {
-                foreach (Checkpoint checkpoint in checkpointList)
-                {
-                    if (checkpoint.id == id)
-                        return checkpoint;
-                }
-                return null;
-            }
-
-            public PointF NextPoint(bool traversed)
-            {
-                var nextCheckpoint = ClosestCheckpoint(traversed);
-                return new PointF(nextCheckpoint.x, nextCheckpoint.y);
-            }
+            }            
 
         }
 
@@ -138,8 +127,12 @@ namespace TreeGlide.Managers
         private Movement movement;
         public Logger logger;
         private bool running;
+        private Path createdPath;
         private Path currentPath;
-        private Path selectedPath;
+        private Checkpoint destination;
+        private Checkpoint currentPoint;
+        private bool backwards = false;
+        
 
         private async Task<T> Run<T>(T x) => await System.Threading.Tasks.Task.Run(() => x);
         public PathManager(TimerManager timerManager, LocalPlayer localPlayer, Movement movement, ItemsControl logBox)
@@ -156,14 +149,13 @@ namespace TreeGlide.Managers
             if (running)
                 return;
             Path path = new Path(localPlayer, logger);
-            this.currentPath = path;
+            this.createdPath = path;
             DispatcherTimer pathTimer = timerManager.CreateTimer(250, true);
             pathTimer.Tick += (s, e1) => { pathTimer_Tick(s, e1, path); };
             logger.Log("Creating path... Move in any direction to add checkpoints.");
             pathTimer.Start();
             this.running = true;
         }
-        public Path GetSelectedPath() => this.selectedPath;
 
         public void StopCreatePath()
         {
@@ -180,25 +172,25 @@ namespace TreeGlide.Managers
 
             using (outputFile = new StreamWriter(System.IO.Path.Combine(directory, name + ".txt")))
             {
-                foreach (Checkpoint checkpoint in this.currentPath.GetCheckpointsList())
+                foreach (Checkpoint checkpoint in this.createdPath.checkpointList)
                     await outputFile.WriteLineAsync(checkpoint.ToString());
             }
             logger.Log("Path saved in:\n" + System.IO.Path.GetFullPath(directory));
-            this.currentPath.SetName(name);
+            this.createdPath.SetName(name);
         }
 
         private async void pathTimer_Tick(object sender, EventArgs e, Path path)
         {
             if (!MainWindow.localFound)
                 return;            
-            var checkpointList = await Run(path.GetCheckpointsList());
-            int id = checkpointList.Count;
+            var checkpointList = await Run(path.checkpointList);
+            int id = checkpointList.Count + 1;
             if (checkpointList.Count == 0)
             {
                 path.Add(id++);
                 return;
             }
-            var closestCheckpointDistance = await Run(path.ClosestCheckpoint(false).distanceFromMe);
+            var closestCheckpointDistance = await Run(path.ClosestCheckpoint().distanceFromMe);
             if (closestCheckpointDistance < 100f)    //Make distance selectable
                 return;
             path.Add(id++);
@@ -208,23 +200,23 @@ namespace TreeGlide.Managers
         {
             string assemblyPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string directory = (Directory.CreateDirectory(assemblyPath + "/Paths").ToString() + "/" + name + ".txt");
-            var checkpoints = new List<Checkpoint>();
+            var path = new Path(new List<Checkpoint>(), localPlayer, name);
+            this.currentPath = path;
 
             using (var stream = new StreamReader(directory))
             {
                 string line;
                 while ((line = await stream.ReadLineAsync()) != null)
-                    checkpoints.Add(ConvertCheckpoint(line));
+                    path.checkpointList.Add(ConvertCheckpoint(line));
             }
 
-            var path = new Path(checkpoints, name);
-            if (path.GetCheckpointsList() == null)
+            if (path.checkpointList == null)
             {
                 logger.Log("Error: Selected path checkpointList is null.");
                 return;
             }
             logger.Log(name + " successfully loaded.");
-            this.selectedPath = path;
+            SetChildren(this.currentPath);
         }
 
         public Checkpoint ConvertCheckpoint(string line)
@@ -232,12 +224,79 @@ namespace TreeGlide.Managers
             var matches = Regex.Matches(line, @"([-+]?[0-9]*\.?[0-9]+)");
             if (matches.Count != 5)
                 return null;
-            return new Checkpoint(Convert.ToSingle(matches[0].Value), Convert.ToSingle(matches[1].Value), Convert.ToSingle(matches[2].Value), Convert.ToInt32(matches[3].Value), Convert.ToInt32(matches[4].Value));
+            return new Checkpoint(Convert.ToSingle(matches[0].Value), Convert.ToSingle(matches[1].Value), Convert.ToSingle(matches[2].Value), Convert.ToInt32(matches[3].Value), FindById(Convert.ToInt32(matches[4].Value)));
+        }
+
+        public Checkpoint FindById(int id)
+        {
+            foreach (Checkpoint checkpoint in currentPath.checkpointList)
+            {
+                if (checkpoint.id == id)
+                    return checkpoint;
+            }
+            return null;
+        }
+
+        public void SetChildren(Path currentPath)
+        {
+            foreach (Checkpoint parent in currentPath.checkpointList)
+            {
+                foreach (Checkpoint child in currentPath.checkpointList)
+                {
+                    if (child.parent == parent)
+                    {
+                        parent.child = child;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        public void Initialize()
+        {
+            currentPoint = currentPath.ClosestCheckpoint();
+            destination = currentPoint.child;
         }
 
         public void MoveAlongPath()
         {
+            if (!backwards && (destination == null))
+            {
+                backwards = !backwards;
+                destination = currentPoint.parent;
+                return;
+            }
+            if (backwards && (destination == null))
+            {
+                backwards = !backwards;
+                destination = currentPoint.child;
+                return;
+            }
+            if (destination.DistanceFromMe(localPlayer) <= 40f)
+            {
+                currentPoint = destination;
+                destination = backwards ? currentPoint.parent : currentPoint.child;
+            }
+            if (destination == null)
+                return;
+            if (currentPoint.ConnectedWith(destination))
+                movement.MoveToPoint(destination, 40f);            
+            //NavigateConnected(destination);
+        }
 
+        private void NavigateConnected(Checkpoint destination)
+        {
+            if (currentPoint == destination)
+                return;
+            if (currentPoint.ConnectedWith(destination))
+            {
+                movement.MoveToPoint(destination, 40f);
+                return;
+            }
+            if (destination.id < currentPoint.id)
+                NavigateConnected(currentPoint.parent);
+            else
+                NavigateConnected(currentPoint.child);
         }
     }
 }
