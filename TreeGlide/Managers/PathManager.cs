@@ -260,11 +260,11 @@ namespace TreeGlide.Managers
 
         private bool SetDestinationInOrder()
         {
-            if (currentPoint.id == currentPath.checkpointList.Count && destination != currentPath.checkpointList[currentPoint.id - 1])
+            if (currentPoint.id == currentPath.checkpointList.Count && destination != currentPath.checkpointList[currentPoint.id - 2])
                 backwards = true;
-            else if (currentPoint.id == currentPath.checkpointList[0].id && destination != currentPath.checkpointList[currentPoint.id + 1])
+            else if (currentPoint.id == currentPath.checkpointList[0].id && destination != currentPath.checkpointList[currentPoint.id])
                 backwards = false;
-            destination = backwards ? currentPath.checkpointList[currentPoint.id - 1] : currentPath.checkpointList[currentPoint.id + 1];
+            destination = backwards ? currentPath.checkpointList[currentPoint.id - 2] : currentPath.checkpointList[currentPoint.id];
             if (destination != null)
                 return true;
             return false;
@@ -286,22 +286,22 @@ namespace TreeGlide.Managers
 
         private void NavigateConnected(Checkpoint destination)
         {
-            if (currentPoint == destination)
-                return;
             if (destination.DistanceFromMe(localPlayer) <= 40f)
             {
                 currentPoint = destination;
                 return;
             }
-            if (currentPoint.ConnectedWith(destination))
+            if (destination.ConnectedWith(currentPoint))
             {
                 movement.MoveToPoint(destination, 40f);
                 return;
             }
-            if (destination.id < currentPoint.id)
-                NavigateConnected(currentPoint.parent);
-            else
-                NavigateConnected(currentPoint.child);
+            if (!backwards)
+            {
+                if (destination.id > currentPoint.id)
+                    destination = destination.parent;
+                NavigateConnected(currentPath.checkpointList[destination.id]);
+            }
         }
     }
 }
