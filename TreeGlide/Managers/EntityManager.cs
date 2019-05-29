@@ -49,7 +49,7 @@ namespace TreeGlide
                     break;
 
                 int entityType = this.memoryManager.ReadValue<int>(offsetArr);                  
-                if (entityType == 19208360)
+                if (entityType == 19246932)
                     entities.Add(new Entity(i, memoryManager, movement));
                 offsetArr[2] = i + 0x4;
             }            

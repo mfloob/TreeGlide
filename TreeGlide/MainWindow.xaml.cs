@@ -21,7 +21,7 @@ namespace TreeGlide
     public partial class MainWindow : MetroWindow
     {
         private const string PROCESS_NAME = "Client_tos";
-        private const Int32 LOCAL_BASE = 0x1505234;
+        private const Int32 LOCAL_BASE = 0x15102DC;
         private bool processOpen;
         private bool attached;
         private bool attachedLogged;

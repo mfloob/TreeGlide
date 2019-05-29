@@ -76,7 +76,7 @@ namespace TreeGlide
         }
         public bool IsFound()
         {
-            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19200784;
+            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19239360;
             //if (isFound)
             //    UpdateValues();
             return isFound;

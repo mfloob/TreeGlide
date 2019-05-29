@@ -97,7 +97,7 @@ namespace TreeGlide.Managers
                     checkpoint.id = id;
                 }
                 else
-                    checkpoint = new Checkpoint(localPlayer.X, localPlayer.Y, localPlayer.Z, id, ClosestCheckpoint());
+                    checkpoint = new Checkpoint(localPlayer.X, localPlayer.Y, localPlayer.Z, id, checkpointList[checkpointList.Count - 1]);
                 checkpointList.Add(checkpoint);
                 logger.Log(String.Format("New checkpoint at: {0}.", checkpoint));
             }
@@ -190,8 +190,7 @@ namespace TreeGlide.Managers
                 path.Add(id++);
                 return;
             }
-            var closestCheckpointDistance = await Run(path.ClosestCheckpoint().distanceFromMe);
-            if (closestCheckpointDistance < 100f)    //Make distance selectable
+            if (checkpointList[checkpointList.Count - 1].DistanceFromMe(localPlayer) < 100f)    //Make distance selectable
                 return;
             path.Add(id++);
         }
@@ -281,7 +280,6 @@ namespace TreeGlide.Managers
                 movement.MoveToPoint(destination, 40f);
                 return;
             }
-            NavigateConnected(destination);
         }
 
         private void NavigateConnected(Checkpoint destination)
@@ -291,17 +289,7 @@ namespace TreeGlide.Managers
                 currentPoint = destination;
                 return;
             }
-            if (destination.ConnectedWith(currentPoint))
-            {
-                movement.MoveToPoint(destination, 40f);
-                return;
-            }
-            if (!backwards)
-            {
-                if (destination.id > currentPoint.id)
-                    destination = destination.parent;
-                NavigateConnected(currentPath.checkpointList[destination.id]);
-            }
+            
         }
     }
 }
