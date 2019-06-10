@@ -14,6 +14,7 @@ namespace TreeGlide
         public float Z;
         private float attackSpeed;
         private float movementSpeed;
+        private float faceAngle;
         private bool isFound;
         MemoryManager memoryManager;
 
@@ -28,6 +29,7 @@ namespace TreeGlide
             internal const int COORDS_Z = 0x4E8;
             internal const int ATTACKSPEED = 0x7DC;
             internal const int MOVESPEED = 0x560;
+            internal const int FACEANGLE = 0x558;
         }
         #endregion
 
@@ -76,10 +78,19 @@ namespace TreeGlide
         }
         public bool IsFound()
         {
-            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19239360;
+            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19239528;
             //if (isFound)
             //    UpdateValues();
             return isFound;
+        }
+        public float GetFaceAngle()
+        {
+            this.faceAngle = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.FACEANGLE });
+            return this.faceAngle;
+        }
+        public void SetFaceAngle(float angle)
+        {
+            this.memoryManager.WriteValue(angle, new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.FACEANGLE });
         }
     }
 }

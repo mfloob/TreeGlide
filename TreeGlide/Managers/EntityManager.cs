@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 
@@ -36,7 +37,7 @@ namespace TreeGlide
         public Entity GetTarget(float distance)
         {
             this.target = NearestEntity(distance);
-            return target;
+            return target ?? null;
         }
 
         public List<Entity> GetEntities()

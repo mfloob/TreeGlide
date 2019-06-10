@@ -190,7 +190,7 @@ namespace TreeGlide.Managers
                 path.Add(id++);
                 return;
             }
-            if (checkpointList[checkpointList.Count - 1].DistanceFromMe(localPlayer) < 100f)    //Make distance selectable
+            if (checkpointList[checkpointList.Count - 1].DistanceFromMe(localPlayer) < 50f)    //Make distance selectable
                 return;
             path.Add(id++);
         }
@@ -253,8 +253,8 @@ namespace TreeGlide.Managers
 
         public void Initialize()
         {
-            currentPoint = currentPath.ClosestCheckpoint();
-            SetDestinationInOrder();
+            //currentPoint = currentPath.ClosestCheckpoint();
+            //SetDestinationInOrder();
         }
 
         private bool SetDestinationInOrder()

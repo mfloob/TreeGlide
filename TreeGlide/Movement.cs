@@ -66,13 +66,11 @@ namespace TreeGlide
         {
             double angle = MyAngleToPoint(destination);
             double distance = MyDistanceToPoint(destination);
-
-            if (distance < maxDistance)
-            {
-                KeysUp();
-                return;
-            }
             AttackUp();
+
+            if (distance <= maxDistance)
+                KeysUp();
+
             if (angle > 22.5 && angle <= 67.5)
                 MoveLeft();
             else if (angle > 67.5 && angle <= 112.5)
@@ -99,13 +97,11 @@ namespace TreeGlide
             PointF destination = new PointF(checkpoint.X, checkpoint.Y);
             double angle = MyAngleToPoint(destination);
             double distance = MyDistanceToPoint(destination);
-
-            //if (distance < maxDistance)
-            //{
-            //    KeysUp();
-            //    return;
-            //}
             AttackUp();
+
+            if (distance <= maxDistance)
+                KeysUp();
+
             if (angle > 22.5 && angle <= 67.5)
                 MoveLeft();
             else if (angle > 67.5 && angle <= 112.5)
@@ -130,6 +126,7 @@ namespace TreeGlide
         public void Attack()
         {
             KeysUp();
+            Console.WriteLine("Attacking");
             InputManager.CastKeyDown(space);   
         }        
 
@@ -195,16 +192,18 @@ namespace TreeGlide
             InputManager.CastKeyDown(down);
             InputManager.CastKeyDown(left);
         }
-        private void KeysUp()
+        public void KeysUp()
         {
             InputManager.CastKeyUp(up);
             InputManager.CastKeyUp(right);
             InputManager.CastKeyUp(down);
             InputManager.CastKeyUp(left);
+            Console.WriteLine("Keys are lifted!!!");
         }
         public void AttackUp()
         {
             InputManager.CastKeyUp(space);
+            Console.WriteLine("Attack is lifted!!!");
         }
         #endregion
     }

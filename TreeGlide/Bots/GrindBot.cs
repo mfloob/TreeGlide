@@ -12,7 +12,7 @@ namespace TreeGlide
     {
         public override void OnStart()
         {
-            Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck(), new MoveAlongPath());
+            Add(new AttackTarget(), new MoveToNearestEnemy(), new StuckCheck()/*, new MoveAlongPath()*/);
         }
 
         public GrindBot(PathManager pathManager)
@@ -27,10 +27,8 @@ namespace TreeGlide
     {
         public override bool Validate()
         {
-            target = entityManager.GetTarget(190f);
-            if (target != null)
-                return false;
-            return true;
+            target = entityManager.GetTarget(140f);
+            return target == null;
         }
 
         public override bool Execute()
@@ -45,10 +43,8 @@ namespace TreeGlide
     {
         public override bool Validate()
         {
-            target = entityManager.GetTarget(190f);
-            if (target == null)
-                return false;
-            return target.GetDistance() < 20f;
+            target = entityManager.GetTarget(140f);
+            return target != null && target.GetDistance() <= 30f && target.IsAlive();
         }
 
         public override bool Execute()
@@ -62,20 +58,20 @@ namespace TreeGlide
     {
         public override bool Validate()
         {
-            target = entityManager.GetTarget(190f);
-            if (target == null)
-                return false;
-            if (target.GetDistance() >= 20f)
+            target = entityManager.GetTarget(140f);
+            if (target?.GetDistance() <= 30f)
             {
-                return true;
+                movement.KeysUp();
+                return false;
             }
-            return false;
+            return target != null && target.IsAlive();
         }
 
         public override bool Execute()
         {
-            if (target != null)
-                movement.MoveToPoint(new PointF(target.xCoord, target.yCoord), 20f);
+            if (target != null && target?.GetDistance() > 30f)
+                movement.MoveToPoint(new PointF(target.xCoord, target.yCoord), 30f);
+            Console.WriteLine("Moving to enemy");
             return true;
         }
     }
@@ -89,7 +85,7 @@ namespace TreeGlide
 
         public override bool Validate()
         {
-            target = entityManager.GetTarget(100f);
+            target = entityManager.GetTarget(140f);
             if (target == null)
             {
                 movement.AttackUp();
@@ -111,7 +107,7 @@ namespace TreeGlide
             else if (!attacking)
                 attackCount++;
 
-            if (moveCount > 10 || attackCount > 10)
+            if (moveCount > 5 || attackCount > 5)
             {
                 moveCount = 0;
                 attackCount = 0;

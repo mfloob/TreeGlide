@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Diagnostics;
-
+using System.Linq;
 
 namespace TreeGlide
 {
@@ -12,14 +11,29 @@ namespace TreeGlide
         public IntPtr pointer;
         private VAMemory vam;
 
-        public MemoryManager(string process, Int32 baseAddress)
+        public MemoryManager(string process)//, Int32 baseAddress)
         {
             this.vam = new VAMemory(process);
             this.process = Process.GetProcessesByName(process).FirstOrDefault();
-            this.baseAddress = this.process.MainModule.BaseAddress + baseAddress;
+            //this.baseAddress = GetAddressSigScan(@"D0 2D 4A A7 78 DB 0F A2 01 01 01 00 01", "xx????x");
+            this.baseAddress = this.process.MainModule.BaseAddress + 0x15102FC;
+            Console.WriteLine("Address value: " + ReadValue<int>(new int[] { 0x8, 0x8c, 0x428})); //this works and gives us our health value
+
+            Console.WriteLine("Read Address: 0x" + this.baseAddress.ToString("X"));
+            //\xd0\x2d\x00\x00\x00\x00\x0f xx????x
+        }
+        private IntPtr GetAddressSigScan(string pattern, string mask)
+        {
+            var sigScan = new SigScanSharp(this.process, new IntPtr(0x40000), 0xFFFFFF);
+            return sigScan.FindPattern(pattern, mask, 0);
         }
         private void GetPointer(int[] offsetArr)
         {
+            if (offsetArr.Length == 0)
+            {
+                this.pointer =  (IntPtr)vam.ReadInt32(this.baseAddress);
+                return;
+            }
             this.pointer = IntPtr.Add((IntPtr)vam.ReadInt32(this.baseAddress), offsetArr[0]);
             for (int i = 1; i < offsetArr.Length; i++)
             {

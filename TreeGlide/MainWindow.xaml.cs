@@ -21,7 +21,7 @@ namespace TreeGlide
     public partial class MainWindow : MetroWindow
     {
         private const string PROCESS_NAME = "Client_tos";
-        private const Int32 LOCAL_BASE = 0x15102DC;
+        private const Int32 LOCAL_BASE = 0x15102FC;
         private bool processOpen;
         private bool attached;
         private bool attachedLogged;
@@ -57,12 +57,18 @@ namespace TreeGlide
 
         private void CreateManagers()
         {
-            memoryManager = new MemoryManager(PROCESS_NAME, LOCAL_BASE);
+            memoryManager = new MemoryManager(PROCESS_NAME);
             localPlayer = new LocalPlayer(memoryManager);
             movement = new Movement(localPlayer);
             entityManager = new EntityManager(memoryManager, movement);
             pathManager = new PathManager(timerManager, localPlayer, movement, Path_LogBox);
             FillPathDropDown();
+
+            var testingMobs = new int[] { 57626, 57568, 45132, 57572, 57016 };
+            foreach(int mob in testingMobs)
+            {
+                entityManager.AddAttackList(mob);
+            }
         }
 
         private void FillPathDropDown()
@@ -212,14 +218,9 @@ namespace TreeGlide
                 logger.Log("No LocalPlayer found.");
                 return;
             }
-            //else if (entityManager.AttackListEmpty())
-            //{
-            //    logger.Log("Attack list empty.");
-            //    return;
-            //}
             InputManager.SetActiveWindow("Client_tos");
             GrindBot bot = new GrindBot(pathManager);
-            DispatcherTimer botTimer = timerManager.CreateTimer(50, true);
+            DispatcherTimer botTimer = timerManager.CreateTimer(25, true);
             botTimer.Tick += (s, e1) => { botTimer_Tick(s, e1, bot); };
             botTimer.Start();
             running = true;
