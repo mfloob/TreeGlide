@@ -11,6 +11,7 @@ namespace TreeGlide
         private Movement movement;
         private List<int> attackList;
         private Entity target;
+        private IntPtr baseAddress;
 
         #region Offsets
         private struct Offsets
@@ -29,7 +30,10 @@ namespace TreeGlide
         {
             this.memoryManager = memoryManager;
             this.movement = movement;
-            attackList = new List<int>();
+            this.attackList = new List<int>();
+            this.baseAddress = memoryManager.GetAddressSigScan(@"\xa3\x00\x00\x00\x00\xc7\x45\x00\x00\x00\x00\x00\x68", "x????xx?????x", -0x7) + 0x14;
+            Console.WriteLine(this.baseAddress.ToString("X"));
+            //\xa3\x00\x00\x00\x00\xc7\x45\x00\x00\x00\x00\x00\x68 x????xx?????x
         }
 
         public bool AttackListEmpty() => attackList.Count == 0;
@@ -46,14 +50,14 @@ namespace TreeGlide
             int[] offsetArr = { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, 0x0, 0x0 };
             for (int i = 0x0; i < 0x200; i += 0x4)
             {
-                if (this.memoryManager.ReadValue<int>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, i }) == 0)
+                if (this.memoryManager.ReadValue<int>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, i }) == 0)
                     break;
 
-                int entityType = this.memoryManager.ReadValue<int>(offsetArr);                  
-                if (entityType == 19246932)
-                    entities.Add(new Entity(i, memoryManager, movement));
+                int entityType = this.memoryManager.ReadValue<int>(this.baseAddress, offsetArr);
+                if (entityType == 19247100)
+                    entities.Add(new Entity(this.baseAddress, i, memoryManager, movement));
                 offsetArr[2] = i + 0x4;
-            }            
+            }
             return entities;
         }
 

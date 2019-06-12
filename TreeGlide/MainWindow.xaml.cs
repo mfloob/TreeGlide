@@ -65,7 +65,7 @@ namespace TreeGlide
             FillPathDropDown();
 
             var testingMobs = new int[] { 57626, 57568, 45132, 57572, 57016 };
-            foreach(int mob in testingMobs)
+            foreach(int mob  in testingMobs)
             {
                 entityManager.AddAttackList(mob);
             }

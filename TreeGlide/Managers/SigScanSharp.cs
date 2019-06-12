@@ -223,13 +223,6 @@ namespace TreeGlide
                 // Create the region space to dump into.
                 this.m_vDumpedRegion = new byte[this.m_vSize];
 
-                bool bReturn = false;
-                int nBytesRead = 0;
-
-                // Dump the memory.
-                //bReturn = ReadProcessMemory(
-                //    this.m_vProcess.Handle, this.m_vAddress, this.m_vDumpedRegion, this.m_vSize
-                //    );
                 IntPtr handle = this.m_vProcess.Handle;
                 if (handle == IntPtr.Zero)
                     throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -245,43 +238,45 @@ namespace TreeGlide
                         //    throw new Win32Exception(hr);
 
                         //long pp = 0;
-                        int result = NtWow64ReadVirtualMemory64(handle, (long)this.m_vProcess.MainModule.BaseAddress, this.m_vDumpedRegion, this.m_vSize, IntPtr.Zero);
+                        var result = NtWow64ReadVirtualMemory64(handle, (long)this.m_vProcess.MainModule.BaseAddress, this.m_vDumpedRegion, this.m_vSize, IntPtr.Zero);
                         if (result != 0)
                             throw new Win32Exception(result);
 
                         return result == 0;
                     }
-                    //else // we are running with the same bitness as the OS, 32 or 64
-                    //{
-                    //    PROCESS_BASIC_INFORMATION pbi = new PROCESS_BASIC_INFORMATION();
-                    //    int hr = NtQueryInformationProcess(handle, 0, ref pbi, Marshal.SizeOf(pbi), IntPtr.Zero);
-                    //    if (hr != 0)
-                    //        throw new Win32Exception(hr);
+                    else // we are running with the same bitness as the OS, 32 or 64
+                    {
+                        var result = ReadProcessMemory(this.m_vProcess.Handle, this.m_vAddress, this.m_vDumpedRegion, this.m_vSize);
+                        if (!result)
+                            throw new Win32Exception(Marshal.GetLastWin32Error());
+                        //PROCESS_BASIC_INFORMATION pbi = new PROCESS_BASIC_INFORMATION();
+                        //int hr = NtQueryInformationProcess(handle, 0, ref pbi, Marshal.SizeOf(pbi), IntPtr.Zero);
+                        //if (hr != 0)
+                        //    throw new Win32Exception(hr);
 
-                    //    IntPtr pp = new IntPtr();
-                    //    if (!ReadProcessMemory(handle, pbi.PebBaseAddress + processParametersOffset, ref pp, new IntPtr(Marshal.SizeOf(pp)), IntPtr.Zero))
-                    //        throw new Win32Exception(Marshal.GetLastWin32Error());
+                        //IntPtr pp = new IntPtr();
+                        //if (!ReadProcessMemory(handle, pbi.PebBaseAddress + processParametersOffset, ref pp, new IntPtr(Marshal.SizeOf(pp)), IntPtr.Zero))
+                        //    throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                    //    UNICODE_STRING us = new UNICODE_STRING();
-                    //    if (!ReadProcessMemory(handle, pp, ref us, new IntPtr(Marshal.SizeOf(us)), IntPtr.Zero))
-                    //        throw new Win32Exception(Marshal.GetLastWin32Error());
+                        //UNICODE_STRING us = new UNICODE_STRING();
+                        //if (!ReadProcessMemory(handle, pp, ref us, new IntPtr(Marshal.SizeOf(us)), IntPtr.Zero))
+                        //    throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                    //    if ((us.Buffer == IntPtr.Zero) || (us.Length == 0))
-                    //        return false;
+                        //if ((us.Buffer == IntPtr.Zero) || (us.Length == 0))
+                        //    return false;
 
-                    //    string s = new string('\0', us.Length / 2);
-                    //    if (!ReadProcessMemory(handle, us.Buffer, s, new IntPtr(us.Length), IntPtr.Zero))
-                    //        throw new Win32Exception(Marshal.GetLastWin32Error());
+                        //string s = new string('\0', us.Length / 2);
+                        //if (!ReadProcessMemory(handle, us.Buffer, s, new IntPtr(us.Length), IntPtr.Zero))
+                        //    throw new Win32Exception(Marshal.GetLastWin32Error());
 
-                    //    return true;
-                    //}
+                        return result;
+                    }
                 }
-                finally
+                catch (Exception e)
                 {
-                    CloseHandle(handle);
+                    Console.WriteLine(e.ToString());
+                    return false;
                 }
-
-                return true;
             }
             catch (Exception e)
             {
@@ -348,7 +343,6 @@ namespace TreeGlide
         private byte[] CodePatternToByteArr(string pattern)
         {
             var rawPattern = pattern.Substring(1, pattern.IndexOf("\\")).Replace("\\x", "") + pattern.Substring(pattern.IndexOf("\\"), pattern.Length).Replace("\\x", "");
-            Console.WriteLine(rawPattern);
             var bytes = new byte[rawPattern.Length >> 1];
             for (int i = 0; i < rawPattern.Length >> 1; ++i)
             {

@@ -14,6 +14,7 @@ namespace TreeGlide
         public bool isAlive;
         private MemoryManager memoryManager;
         private Movement movement;
+        private IntPtr baseAddress;
 
         #region Offsets
         private struct Offsets
@@ -28,11 +29,12 @@ namespace TreeGlide
         }
         #endregion
 
-        public Entity(int mem, MemoryManager memoryManager, Movement movement)
+        public Entity(IntPtr baseAddress, int mem, MemoryManager memoryManager, Movement movement)
         {
             this.mem = mem;
             this.memoryManager = memoryManager;
             this.movement = movement;
+            this.baseAddress = baseAddress;
             this.id = GetID();
         }
 
@@ -47,24 +49,24 @@ namespace TreeGlide
 
         public int GetHealth()
         {
-            return this.memoryManager.ReadValue<int>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_HEALTH });
+            return this.memoryManager.ReadValue<int>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_HEALTH });
         }
         public int GetID()
         {
-            return this.memoryManager.ReadValue<int>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_ID });
+            return this.memoryManager.ReadValue<int>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_ID });
         }
 
         public float GetX()
         {
-            return this.memoryManager.ReadValue<float>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_X });
+            return this.memoryManager.ReadValue<float>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_X });
         }
         public float GetY()
         {
-            return this.memoryManager.ReadValue<float>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_Y });
+            return this.memoryManager.ReadValue<float>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_Y });
         }
         public float GetZ()
         {
-            return this.memoryManager.ReadValue<float>(new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_Z });
+            return this.memoryManager.ReadValue<float>(this.baseAddress, new int[] { Offsets.ENTITY_BASE_1, Offsets.ENTITY_BASE_2, this.mem, Offsets.ENTITY_Z });
         }
         public bool IsAlive()
         {
