@@ -21,8 +21,6 @@ namespace TreeGlide
         #region Offsets
         private struct Offsets
         {            
-            internal const int LOCALPLAYER_1 = 0x8;
-            internal const int LOCALPLAYER_2 = 0x8C;
             internal const int HEALTH = 0x428;
             internal const int COORDS_X = 0x4E4;
             internal const int COORDS_Y = 0x4EC;
@@ -44,53 +42,53 @@ namespace TreeGlide
             this.X = GetX();
             this.Y = GetY();
             this.Z = GetZ();
-            this.attackSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.ATTACKSPEED });
-            this.movementSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.MOVESPEED });
+            this.attackSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.ATTACKSPEED });
+            this.movementSpeed = this.memoryManager.ReadValue<float>(new int[] { Offsets.MOVESPEED });
         }
 
         public int GetHealth()
         {
-            this.health = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.HEALTH });
+            this.health = this.memoryManager.ReadValue<int>(new int[] { Offsets.HEALTH });
             return this.health;
         }
 
         public void Teleport(float x, float y, float z)
         {
-            memoryManager.WriteValue(x, new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_X });
-            memoryManager.WriteValue(y, new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Y });
-            memoryManager.WriteValue(z, new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Z });
+            memoryManager.WriteValue(x, new int[] { Offsets.COORDS_X });
+            memoryManager.WriteValue(y, new int[] { Offsets.COORDS_Y });
+            memoryManager.WriteValue(z, new int[] { Offsets.COORDS_Z });
         }
 
         public float GetX()
         {
-            this.X = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_X });
+            this.X = this.memoryManager.ReadValue<float>(new int[] { Offsets.COORDS_X });
             return this.X;
         }
         public float GetY()
         {
-            this.Y = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Y });
+            this.Y = this.memoryManager.ReadValue<float>(new int[] { Offsets.COORDS_Y });
             return this.Y;
         }
         public float GetZ()
         {
-            this.Z = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.COORDS_Z });
+            this.Z = this.memoryManager.ReadValue<float>(new int[] { Offsets.COORDS_Z });
             return this.Z;
         }
         public bool IsFound()
         {
-            this.isFound = this.memoryManager.ReadValue<int>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, 0x0 }) == 19239528;
+            this.isFound = this.memoryManager.ReadValue<int>(new int[] { 0x0 }) == 19239528;
             //if (isFound)
             //    UpdateValues();
             return isFound;
         }
         public float GetFaceAngle()
         {
-            this.faceAngle = this.memoryManager.ReadValue<float>(new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.FACEANGLE });
+            this.faceAngle = this.memoryManager.ReadValue<float>(new int[] {  Offsets.FACEANGLE });
             return this.faceAngle;
         }
         public void SetFaceAngle(float angle)
         {
-            this.memoryManager.WriteValue(angle, new int[] { Offsets.LOCALPLAYER_1, Offsets.LOCALPLAYER_2, Offsets.FACEANGLE });
+            this.memoryManager.WriteValue(angle, new int[] { Offsets.FACEANGLE });
         }
     }
 }

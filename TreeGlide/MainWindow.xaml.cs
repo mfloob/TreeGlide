@@ -49,7 +49,7 @@ namespace TreeGlide
         {
             logger = new Logger(LogBox);
             logger.Log("Waiting for process...");
-            timerManager = new TimerManager();            
+            timerManager = new TimerManager();
             StartProcessCheckTimer();
             StartCoordsTimer();
         }
