@@ -32,7 +32,7 @@ namespace TreeGlide
             this.movement = movement;
             this.attackList = new List<int>();
             this.baseAddress = memoryManager.GetAddressSigScan(@"\xa3\x00\x00\x00\x00\xc7\x45\x00\x00\x00\x00\x00\x68", "x????xx?????x", -0x7) + 0x14;
-            Console.WriteLine(this.baseAddress.ToString("X"));
+            //Console.WriteLine(this.baseAddress.ToString("X"));
             //\xa3\x00\x00\x00\x00\xc7\x45\x00\x00\x00\x00\x00\x68 x????xx?????x
         }
 
@@ -64,7 +64,7 @@ namespace TreeGlide
         public List<Entity> GetEntitiesDistinct(List<int> idList)
         {
             List<Entity> entityList = GetEntities();
-            foreach(Entity entity in entityList.ToList())
+            foreach(Entity entity in entityList)
             {
                 foreach(int id in idList)
                 {
