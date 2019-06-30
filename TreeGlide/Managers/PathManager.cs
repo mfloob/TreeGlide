@@ -253,8 +253,8 @@ namespace TreeGlide.Managers
 
         public void Initialize()
         {
-            //currentPoint = currentPath.ClosestCheckpoint();
-            //SetDestinationInOrder();
+            currentPoint = currentPath.ClosestCheckpoint();
+            SetDestinationInOrder();
         }
 
         private bool SetDestinationInOrder()
